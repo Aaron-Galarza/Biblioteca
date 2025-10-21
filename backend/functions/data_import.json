@@ -1,0 +1,58 @@
+{
+  "socios": {
+    "ana-perez-id": {
+      "nombre": "Ana Pérez",
+      "dni": "40123456",
+      "numeroSocio": "0001",
+      "email": "ana@example.com",
+      "telefono": "1123456789"
+    },
+    "carlos-gomez-id": {
+      "nombre": "Carlos Gómez",
+      "dni": "38987654",
+      "numeroSocio": "0002",
+      "email": "carlos@example.com",
+      "telefono": "1134567890"
+    }
+  },
+  "libros": {
+    "cien-anos-id": {
+      "titulo": "Cien años de soledad",
+      "autor": "Gabriel García Márquez",
+      "isbn": "9788497592208",
+      "estado": "DISPONIBLE"
+    },
+    "principito-id": {
+      "titulo": "El Principito",
+      "autor": "Antoine de Saint-Exupéry",
+      "isbn": "9780156013987",
+      "estado": "DISPONIBLE"
+    },
+    "rayuela-id": {
+      "titulo": "Rayuela",
+      "autor": "Julio Cortázar",
+      "isbn": "9788437604947",
+      "estado": "PRESTADO"
+    }
+  },
+  "prestamos": {
+    "prestamo-activo-1": {
+      "idSocio": "carlos-gomez-id",
+      "idLibro": "rayuela-id",
+      "fechaInicio": "2025-10-10",
+      "fechaDevolucion": "2025-10-17",
+      "fechaRealDevolucion": null,
+      "multa": 0,
+      "estadoPrestamo": "ACTIVO"
+    }
+  },
+  "multas": {
+    "multa-pendiente-1": {
+      "idSocio": "carlos-gomez-id",
+      "motivo": "Devolución tardía",
+      "monto": 150.00,
+      "fecha": "2025-10-15",
+      "estado": "ACTIVA"
+    }
+  }
+}
