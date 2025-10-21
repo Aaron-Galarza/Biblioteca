@@ -6,52 +6,46 @@ export default function Navbar() {
   const isHomePage = location.pathname === "/";
   
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm fixed-top">
+    <nav className="navbar">
       <div className="container">
-        {/* Título principal */}
-        <Link className="navbar-brand fs-3 fw-bold" to="/">
+        <Link className="navbar-brand" to="/">
           Biblioteca Municipal
         </Link>
 
-        {/* Botón de menú móvil */}
         <button
           className="navbar-toggler"
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
         >
           <span className="navbar-toggler-icon"></span>
         </button>
 
-        {/* Menú principal */}
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
-              <NavLink className="nav-link fs-5" to="/libros">
+              <NavLink className="nav-link" to="/libros">
                 Libros
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink className="nav-link fs-5" to="/socios">
+              <NavLink className="nav-link" to="/socios">
                 Socios
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink className="nav-link fs-5" to="/prestamos">
+              <NavLink className="nav-link" to="/prestamos">
                 Préstamos
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink className="nav-link fs-5" to="/multas">
+              <NavLink className="nav-link" to="/multas">
                 Multas
               </NavLink>
             </li>
             {!isHomePage && (
               <li className="nav-item">
-                <NavLink className="nav-link text-warning fw-semibold fs-5" to="/">
+                <NavLink className="nav-link text-warning" to="/">
                   Salir
                 </NavLink>
               </li>

@@ -2,45 +2,56 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 export default function HomePage() {
+  const modules = [
+    {
+      title: "Gestión de Libros",
+      description: "Administra el catálogo completo de libros",
+      path: "/libros",
+      icon: "📚"
+    },
+    {
+      title: "Gestión de Socios", 
+      description: "Gestiona información de socios y membresías",
+      path: "/socios",
+      icon: "👥"
+    },
+    {
+      title: "Control de Préstamos",
+      description: "Registra préstamos y devoluciones",
+      path: "/prestamos",
+      icon: "🔄"
+    },
+    {
+      title: "Administración de Multas",
+      description: "Gestiona multas y sanciones",
+      path: "/multas",
+      icon: "⚖️"
+    }
+  ];
+
   return (
-    <div className="container py-5">
-      <h1 className="text-center mb-5">Sistema de Gestión de Biblioteca</h1>
-
-      <div className="row g-4">
-        <div className="col-12 col-md-6">
-          <div className="card shadow text-center p-4">
-            <h4 className="card-title mb-3">📚 Gestionar Libros</h4>
-            <Link to="/libros" className="btn btn-primary btn-lg">
-              Ir a Libros
-            </Link>
-          </div>
+    <div className="main-container">
+      <div className="container">
+        <div className="page-header">
+          <h1 className="page-title">Sistema de Gestión de Biblioteca</h1>
+          <p className="page-subtitle">
+            Plataforma integral para la administración moderna de bibliotecas
+          </p>
         </div>
 
-        <div className="col-12 col-md-6">
-          <div className="card shadow text-center p-4">
-            <h4 className="card-title mb-3">👥 Gestionar Socios</h4>
-            <Link to="/socios" className="btn btn-primary btn-lg">
-              Ir a Socios
-            </Link>
-          </div>
-        </div>
-
-        <div className="col-12 col-md-6">
-          <div className="card shadow text-center p-4">
-            <h4 className="card-title mb-3">🔁 Gestionar Préstamos</h4>
-            <Link to="/prestamos" className="btn btn-primary btn-lg">
-              Ir a Préstamos
-            </Link>
-          </div>
-        </div>
-
-        <div className="col-12 col-md-6">
-          <div className="card shadow text-center p-4">
-            <h4 className="card-title mb-3">⚠️ Gestionar Multas</h4>
-            <Link to="/multas" className="btn btn-primary btn-lg">
-              Ir a Multas
-            </Link>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {modules.map((module) => (
+            <div key={module.title} className="card">
+              <div className="card-body text-center">
+                <div className="text-4xl mb-4">{module.icon}</div>
+                <h3 className="text-xl font-semibold mb-2">{module.title}</h3>
+                <p className="text-gray-600 mb-4">{module.description}</p>
+                <Link to={module.path} className="btn btn-primary">
+                  Acceder
+                </Link>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
