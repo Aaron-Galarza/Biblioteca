@@ -1,0 +1,52 @@
+# ========================================
+# 📁 General (Archivos generados y dependencias)
+# ========================================
+node_modules/
+dist/
+build/
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+yarn-error.log*
+.env
+.env.local
+coverage/
+
+# ========================================
+# 🔒 Archivos Secretos (¡CRÍTICO!)
+# ========================================
+# La clave de servicio de Firebase JAMÁS debe subirse a GitHub
+backend/functions/src/config/*.json
+
+# ========================================
+# ⚙️ Backend (Firebase Functions)
+# ========================================
+# Excluir la carpeta de módulos de Functions
+backend/functions/node_modules/
+
+# 💡 NOTA: Las dependencias del backend principal ya están cubiertas por node_modules/ general
+# y por la exclusión específica de functions/node_modules.
+
+# ========================================
+# 💻 Frontend (React App)
+# ========================================
+# Excluir la carpeta de módulos de Frontend
+frontend/node_modules/
+# Excluir la compilación de la app React
+frontend/build/
+
+# ========================================
+# 🧹 Limpieza del proyecto anterior (MySQL/SQL)
+# ========================================
+# Ya no son necesarios, pero se excluyen por si acaso
+database/
+
+# ========================================
+# 🧠 Sistema operativo / IDE
+# ========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*.bak
