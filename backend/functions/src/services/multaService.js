@@ -12,7 +12,7 @@ export const obtenerMultas = async () => {
   // Obtener multas activas
   const snapshot = await multasCollection
     .where("estado", "==", "ACTIVA") 
-    .orderBy("fecha", "desc")
+    //.orderBy("fecha", "desc")
     .get();
 
   let multas = snapshot.docs.map(mapMulta);

@@ -36,10 +36,10 @@ export default function LibrosPage() {
     try {
       if (editando) {
         await api.put(`libros/${libroEditado.idLibro}`, formData);
-        mostrarMensaje("Libro actualizado correctamente ✅", "success");
+        mostrarMensaje("Libro actualizado correctamente", "success");
       } else {
         await api.post("libros", formData);
-        mostrarMensaje("Libro agregado correctamente ✅", "success");
+        mostrarMensaje("Libro agregado correctamente", "success");
       }
 
       setFormData({ titulo: "", autor: "", isbn: "" });
@@ -47,8 +47,7 @@ export default function LibrosPage() {
       setLibroEditado(null);
       cargarLibros();
     } catch (error) {
-      const texto =
-        error.response?.data?.error || "Error al guardar el libro";
+      const texto = error.response?.data?.error || "Error al guardar el libro";
       mostrarMensaje(texto, "danger");
       console.error("Error en guardar libro:", error);
     }
@@ -68,11 +67,10 @@ export default function LibrosPage() {
     if (window.confirm("¿Seguro que deseas eliminar este libro?")) {
       try {
         await api.delete(`libros/${id}`);
-        mostrarMensaje("Libro eliminado correctamente 🗑️", "warning");
+        mostrarMensaje("Libro eliminado correctamente", "warning");
         cargarLibros();
       } catch (error) {
-        const texto =
-          error.response?.data?.error || "Error al eliminar el libro";
+        const texto = error.response?.data?.error || "Error al eliminar el libro";
         mostrarMensaje(texto, "danger");
         console.error("Error al eliminar libro:", error);
       }
@@ -87,129 +85,130 @@ export default function LibrosPage() {
   }, [mostrarMensaje]);
 
   return (
-    <div className="container py-4">
-      <h2 className="mb-4 text-center">📚 Gestión de Libros</h2>
-
-      {mensaje && (
-        <div
-          className={`alert alert-${mensaje.tipo} text-center fw-semibold`}
-          role="alert"
-        >
-          {mensaje.texto}
+    <div className="main-container">
+      <div className="container">
+        <div className="page-header">
+          <h1 className="page-title">Gestión de Libros</h1>
         </div>
-      )}
 
-      <div className="card shadow p-4 mb-4">
-        <h5 className="mb-3">
-          {editando ? "✏️ Editar Libro" : "➕ Agregar Nuevo Libro"}
-        </h5>
-        <form onSubmit={handleSubmit} className="row g-3">
-          <div className="col-md-4">
-            <label className="form-label">Título</label>
-            <input
-              type="text"
-              name="titulo"
-              className="form-control"
-              value={formData.titulo}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="col-md-4">
-            <label className="form-label">Autor</label>
-            <input
-              type="text"
-              name="autor"
-              className="form-control"
-              value={formData.autor}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="col-md-4">
-            <label className="form-label">ISBN</label>
-            <input
-              type="text"
-              name="isbn"
-              className="form-control"
-              value={formData.isbn}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="col-12 text-end">
-            <button type="submit" className="btn btn-success me-2">
-              {editando ? "Guardar Cambios" : "Agregar Libro"}
-            </button>
-            {editando && (
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={handleCancel}
-              >
-                Cancelar
-              </button>
-            )}
-          </div>
-        </form>
-      </div>
-
-      <div className="card shadow p-4">
-        <h5 className="mb-3">📖 Lista de Libros</h5>
-        {libros.length === 0 ? (
-          <p className="text-muted">No hay libros registrados.</p>
-        ) : (
-          <div className="table-responsive">
-            <table className="table table-striped align-middle">
-              <thead className="table-primary">
-                <tr>
-                  <th>ID</th>
-                  <th>Título</th>
-                  <th>Autor</th>
-                  <th>ISBN</th>
-                  <th>Estado</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {libros.map((libro) => (
-                  <tr key={libro.idLibro}>
-                    <td>{libro.idLibro}</td>
-                    <td>{libro.titulo}</td>
-                    <td>{libro.autor}</td>
-                    <td>{libro.isbn}</td>
-                    <td>
-                      <span
-                        className={
-                          libro.estado === "DISPONIBLE"
-                            ? "badge bg-success"
-                            : "badge bg-warning text-dark"
-                        }
-                      >
-                        {libro.estado}
-                      </span>
-                    </td>
-                    <td>
-                      <button
-                        onClick={() => handleEdit(libro)}
-                        className="btn btn-sm btn-outline-primary me-2"
-                      >
-                        Editar
-                      </button>
-                      <button
-                        onClick={() => handleDelete(libro.idLibro)}
-                        className="btn btn-sm btn-outline-danger"
-                      >
-                        Eliminar
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        {mensaje && (
+          <div className={`alert alert-${mensaje.tipo}`}>
+            {mensaje.texto}
           </div>
         )}
+
+        <div className="card">
+          <div className="card-header">
+            {editando ? "Editar Libro" : "Agregar Nuevo Libro"}
+          </div>
+          <div className="card-body">
+            <form onSubmit={handleSubmit} className="row g-3">
+              <div className="col-md-4">
+                <label className="form-label">Título</label>
+                <input
+                  type="text"
+                  name="titulo"
+                  className="form-control"
+                  value={formData.titulo}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="col-md-4">
+                <label className="form-label">Autor</label>
+                <input
+                  type="text"
+                  name="autor"
+                  className="form-control"
+                  value={formData.autor}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="col-md-4">
+                <label className="form-label">ISBN</label>
+                <input
+                  type="text"
+                  name="isbn"
+                  className="form-control"
+                  value={formData.isbn}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="col-12 text-end">
+                <button type="submit" className="btn btn-success me-2">
+                  {editando ? "Guardar Cambios" : "Agregar Libro"}
+                </button>
+                {editando && (
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={handleCancel}
+                  >
+                    Cancelar
+                  </button>
+                )}
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="card-header">
+            Lista de Libros
+          </div>
+          <div className="card-body">
+            {libros.length === 0 ? (
+              <p className="text-muted text-center">No hay libros registrados.</p>
+            ) : (
+              <div className="table-responsive">
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Título</th>
+                      <th>Autor</th>
+                      <th>ISBN</th>
+                      <th>Estado</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {libros.map((libro) => (
+                      <tr key={libro.idLibro}>
+                        <td>{libro.idLibro}</td>
+                        <td>{libro.titulo}</td>
+                        <td>{libro.autor}</td>
+                        <td>{libro.isbn}</td>
+                        <td>
+                          <span className={`badge ${libro.estado === "DISPONIBLE" ? "badge-success" : "badge-warning"}`}>
+                            {libro.estado}
+                          </span>
+                        </td>
+                        <td>
+                          <button
+                            onClick={() => handleEdit(libro)}
+                            className="btn btn-sm btn-outline me-2"
+                          >
+                            Editar
+                          </button>
+                          <button
+                            onClick={() => handleDelete(libro.idLibro)}
+                            className="btn btn-sm btn-danger"
+                          >
+                            Eliminar
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
