@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import api from "../services/api";
 
 export default function SociosPage() {
@@ -11,18 +11,14 @@ export default function SociosPage() {
   });
   const [editando, setEditando] = useState(false);
   const [socioEditado, setSocioEditado] = useState(null);
-  const [mensaje, setMensaje] = useState(null); // { tipo: 'success' | 'danger' | 'warning', texto: '' }
+  const [mensaje, setMensaje] = useState(null);
 
-  useEffect(() => {
-    cargarSocios();
+  const mostrarMensaje = useCallback((texto, tipo = "info") => {
+    setMensaje({ texto, tipo });
+    setTimeout(() => setMensaje(null), 5000);
   }, []);
 
-  const mostrarMensaje = (texto, tipo = "info") => {
-    setMensaje({ texto, tipo });
-    setTimeout(() => setMensaje(null), 5000); 
-  };
-
-  const cargarSocios = async () => {
+  const cargarSocios = useCallback(async () => {
     try {
       const res = await api.get("socios");
       setSocios(res.data);
@@ -30,13 +26,17 @@ export default function SociosPage() {
       mostrarMensaje("Error al cargar socios", "danger");
       console.error("Error al cargar socios:", error);
     }
-  };
+  }, [mostrarMensaje]);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  useEffect(() => {
+    cargarSocios();
+  }, [cargarSocios]);
 
-  const handleSubmit = async (e) => {
+  const handleChange = useCallback((e) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  }, []);
+
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     try {
       if (editando) {
@@ -62,9 +62,9 @@ export default function SociosPage() {
       mostrarMensaje(texto, "danger");
       console.error("Error en guardar socio:", error);
     }
-  };
+  }, [editando, socioEditado, formData, mostrarMensaje, cargarSocios]);
 
-  const handleEdit = (socio) => {
+  const handleEdit = useCallback((socio) => {
     setEditando(true);
     setSocioEditado(socio);
     setFormData({
@@ -73,9 +73,9 @@ export default function SociosPage() {
       email: socio.email,
       telefono: socio.telefono,
     });
-  };
+  }, []);
 
-  const handleDelete = async (id) => {
+  const handleDelete = useCallback(async (id) => {
     if (window.confirm("¿Seguro que deseas eliminar este socio?")) {
       try {
         await api.delete(`socios/${id}`);
@@ -88,9 +88,9 @@ export default function SociosPage() {
         console.error("Error al eliminar socio:", error);
       }
     }
-  };
+  }, [mostrarMensaje, cargarSocios]);
 
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     setEditando(false);
     setSocioEditado(null);
     setFormData({
@@ -100,13 +100,12 @@ export default function SociosPage() {
       telefono: "",
     });
     mostrarMensaje("Edición cancelada", "secondary");
-  };
+  }, [mostrarMensaje]);
 
   return (
     <div className="container py-4">
       <h2 className="mb-4 text-center">👥 Gestión de Socios</h2>
 
-      {/* Mensaje dinámico */}
       {mensaje && (
         <div
           className={`alert alert-${mensaje.tipo} text-center fw-semibold`}
@@ -116,7 +115,6 @@ export default function SociosPage() {
         </div>
       )}
 
-      {/* Formulario */}
       <div className="card shadow p-4 mb-4">
         <h5 className="mb-3">
           {editando ? "✏️ Editar Socio" : "➕ Registrar Nuevo Socio"}
@@ -182,7 +180,6 @@ export default function SociosPage() {
         </form>
       </div>
 
-      {/* Listado */}
       <div className="card shadow p-4">
         <h5 className="mb-3">📋 Lista de Socios</h5>
         {socios.length === 0 ? (

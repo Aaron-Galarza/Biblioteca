@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import api from "../services/api";
 
 export default function PrestamosPage() {
@@ -13,16 +13,12 @@ export default function PrestamosPage() {
   });
   const [mensaje, setMensaje] = useState(null);
 
-  useEffect(() => {
-    cargarDatos();
-  }, []);
-
-  const mostrarMensaje = (texto, tipo = "info") => {
+  const mostrarMensaje = useCallback((texto, tipo = "info") => {
     setMensaje({ texto, tipo });
     setTimeout(() => setMensaje(null), 4000);
-  };
+  }, []);
 
-  const cargarDatos = async () => {
+  const cargarDatos = useCallback(async () => {
     try {
       const [resPrestamos, resSocios, resLibros] = await Promise.all([
         api.get("prestamos"),
@@ -36,11 +32,17 @@ export default function PrestamosPage() {
       mostrarMensaje("Error al cargar datos", "danger");
       console.error(error);
     }
-  };
+  }, [mostrarMensaje]);
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  useEffect(() => {
+    cargarDatos();
+  }, [cargarDatos]);
 
-  const handleSubmit = async (e) => {
+  const handleChange = useCallback((e) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  }, []);
+
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     try {
       await api.post("prestamos", formData);
@@ -51,9 +53,9 @@ export default function PrestamosPage() {
       const texto = error.response?.data?.error || "Error al registrar préstamo";
       mostrarMensaje(texto, "danger");
     }
-  };
+  }, [formData, mostrarMensaje, cargarDatos]);
 
-  const registrarDevolucion = async (idPrestamo) => {
+  const registrarDevolucion = useCallback(async (idPrestamo) => {
     if (window.confirm("¿Confirmar devolución del libro?")) {
       try {
         await api.put(`prestamos/${idPrestamo}/devolver`);
@@ -64,7 +66,7 @@ export default function PrestamosPage() {
         mostrarMensaje(texto, "danger");
       }
     }
-  };
+  }, [mostrarMensaje, cargarDatos]);
 
   return (
     <div className="container py-4">

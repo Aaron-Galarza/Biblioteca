@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import api from "../services/api";
 
 export default function MultasPage() {
@@ -12,38 +12,36 @@ export default function MultasPage() {
   });
   const [mensaje, setMensaje] = useState(null);
 
-  useEffect(() => {
-    cargarDatos();
-  }, []);
-
-  const mostrarMensaje = (texto, tipo = "info") => {
+  const mostrarMensaje = useCallback((texto, tipo = "info") => {
     setMensaje({ texto, tipo });
     setTimeout(() => setMensaje(null), 4000);
-  };
+  }, []);
 
-  const cargarDatos = async () => {
-  try {
-    // primero cargamos socios, así siempre aparecen
-    const resSocios = await api.get("socios");
-    setSocios(resSocios.data);
-    // luego intentamos cargar multas, pero sin bloquear el resto
+  const cargarDatos = useCallback(async () => {
     try {
-      const resMultas = await api.get("multas");
-      setMultas(resMultas.data);
-    } catch (errMultas) {
-      console.warn("No se pudieron cargar multas:", errMultas);
-      setMultas([]); // evita errores si el backend devuelve vacío
-    }
+      const resSocios = await api.get("socios");
+      setSocios(resSocios.data);
+      try {
+        const resMultas = await api.get("multas");
+        setMultas(resMultas.data);
+      } catch (errMultas) {
+        console.warn("No se pudieron cargar multas:", errMultas);
+        setMultas([]);
+      }
     } catch (error) {
-    console.error("Error al cargar datos:", error);
+      console.error("Error al cargar datos:", error);
     }
-  };
+  }, []);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  useEffect(() => {
+    cargarDatos();
+  }, [cargarDatos]);
 
-  const handleSubmit = async (e) => {
+  const handleChange = useCallback((e) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  }, []);
+
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     try {
       await api.post("multas", formData);
@@ -55,9 +53,9 @@ export default function MultasPage() {
       mostrarMensaje(texto, "danger");
       console.error(error);
     }
-  };
+  }, [formData, mostrarMensaje, cargarDatos]);
 
-  const cancelarMulta = async (idMulta) => {
+  const cancelarMulta = useCallback(async (idMulta) => {
     if (window.confirm("¿Confirmar cancelación de esta multa?")) {
       try {
         await api.put(`multas/${idMulta}/cancelar`);
@@ -69,7 +67,7 @@ export default function MultasPage() {
         console.error(error);
       }
     }
-  };
+  }, [mostrarMensaje, cargarDatos]);
 
   return (
     <div className="container py-4">
@@ -173,15 +171,15 @@ export default function MultasPage() {
                     <td>${parseFloat(m.monto).toFixed(2)}</td>
                     <td>{m.fecha}</td>
                     <td>
-                    <span
-                      className={
-                        m.estado === "ACTIVA"
-                          ? "badge bg-warning text-dark"
-                          : "badge bg-success"
-                      }
-                    >
-                      {m.estado}
-                    </span>
+                      <span
+                        className={
+                          m.estado === "ACTIVA"
+                            ? "badge bg-warning text-dark"
+                            : "badge bg-success"
+                        }
+                      >
+                        {m.estado}
+                      </span>
                     </td>
                     <td>
                       <button

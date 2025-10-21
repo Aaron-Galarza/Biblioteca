@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import api from "../services/api";
 
 export default function LibrosPage() {
@@ -6,19 +6,14 @@ export default function LibrosPage() {
   const [formData, setFormData] = useState({ titulo: "", autor: "", isbn: "" });
   const [editando, setEditando] = useState(false);
   const [libroEditado, setLibroEditado] = useState(null);
-  const [mensaje, setMensaje] = useState(null); // { tipo, texto }
+  const [mensaje, setMensaje] = useState(null);
 
-  // Cargar libros al iniciar
-  useEffect(() => {
-    cargarLibros();
-  }, []);
-
-  const mostrarMensaje = (texto, tipo = "info") => {
+  const mostrarMensaje = useCallback((texto, tipo = "info") => {
     setMensaje({ texto, tipo });
     setTimeout(() => setMensaje(null), 4000);
-  };
+  }, []);
 
-  const cargarLibros = async () => {
+  const cargarLibros = useCallback(async () => {
     try {
       const res = await api.get("libros");
       setLibros(res.data);
@@ -26,13 +21,17 @@ export default function LibrosPage() {
       mostrarMensaje("Error al cargar libros", "danger");
       console.error("Error al cargar libros:", error);
     }
-  };
+  }, [mostrarMensaje]);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  useEffect(() => {
+    cargarLibros();
+  }, [cargarLibros]);
 
-  const handleSubmit = async (e) => {
+  const handleChange = useCallback((e) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  }, []);
+
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     try {
       if (editando) {
@@ -53,9 +52,9 @@ export default function LibrosPage() {
       mostrarMensaje(texto, "danger");
       console.error("Error en guardar libro:", error);
     }
-  };
+  }, [editando, libroEditado, formData, mostrarMensaje, cargarLibros]);
 
-  const handleEdit = (libro) => {
+  const handleEdit = useCallback((libro) => {
     setEditando(true);
     setLibroEditado(libro);
     setFormData({
@@ -63,9 +62,9 @@ export default function LibrosPage() {
       autor: libro.autor,
       isbn: libro.isbn,
     });
-  };
+  }, []);
 
-  const handleDelete = async (id) => {
+  const handleDelete = useCallback(async (id) => {
     if (window.confirm("¿Seguro que deseas eliminar este libro?")) {
       try {
         await api.delete(`libros/${id}`);
@@ -78,20 +77,19 @@ export default function LibrosPage() {
         console.error("Error al eliminar libro:", error);
       }
     }
-  };
+  }, [mostrarMensaje, cargarLibros]);
 
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     setEditando(false);
     setLibroEditado(null);
     setFormData({ titulo: "", autor: "", isbn: "" });
     mostrarMensaje("Edición cancelada", "secondary");
-  };
+  }, [mostrarMensaje]);
 
   return (
     <div className="container py-4">
       <h2 className="mb-4 text-center">📚 Gestión de Libros</h2>
 
-      {/* Mensaje dinámico */}
       {mensaje && (
         <div
           className={`alert alert-${mensaje.tipo} text-center fw-semibold`}
@@ -101,7 +99,6 @@ export default function LibrosPage() {
         </div>
       )}
 
-      {/* Formulario */}
       <div className="card shadow p-4 mb-4">
         <h5 className="mb-3">
           {editando ? "✏️ Editar Libro" : "➕ Agregar Nuevo Libro"}
@@ -158,7 +155,6 @@ export default function LibrosPage() {
         </form>
       </div>
 
-      {/* Listado */}
       <div className="card shadow p-4">
         <h5 className="mb-3">📖 Lista de Libros</h5>
         {libros.length === 0 ? (
