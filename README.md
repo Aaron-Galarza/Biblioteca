@@ -26,6 +26,7 @@ El proyecto opera bajo una **Arquitectura en Capas** con el patrón **MVC** embe
 
 La organización del código se divide por responsabilidad:
 
+```
 BibliotecaApp/
 ├── backend/
 │   ├── functions/ 
@@ -39,6 +40,7 @@ BibliotecaApp/
     │   ├── pages/ (Vistas principales)
     │   └── services/api.js (Cliente Axios)
     └── package.json (Scripts de 'deploy')
+```
 
 ---
 
