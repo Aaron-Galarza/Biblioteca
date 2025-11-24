@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import api from "../services/api";
+import api from "../services/Api.js";
 
 export default function PrestamosPage() {
   const [prestamos, setPrestamos] = useState([]);

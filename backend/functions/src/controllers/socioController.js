@@ -1,6 +1,6 @@
 import * as SocioService from "../services/socioService.js";
 
-// Obtener todos los socios
+// GET Partner
 export const getSocios = async (req, res) => {
   try {
     const socios = await SocioService.obtenerSocios();
@@ -10,7 +10,7 @@ export const getSocios = async (req, res) => {
   }
 };
 
-// Obtener socio por ID
+// GET Partner by ID
 export const getSocioById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -21,39 +21,29 @@ export const getSocioById = async (req, res) => {
   }
 };
 
-// Crear nuevo socio 
+// POST Partner
 export const crearSocio = async (req, res) => {
   try {
     const { nombre, dni, email, telefono } = req.body;
-
-    // Validaciones básicas
-    // if (!nombre || !dni) { // TODO: Only add JOI btw
-    //   return res.status(400).json({ error: "El nombre y el DNI son obligatorios" });
-    // }
-
     const socio = await SocioService.registrarSocio({ nombre, dni, email, telefono });
-    res.status(201).json({
-      msg: "Socio registrado correctamente",
-      socio,
-    });
+    res.json(socio);
   } catch (error) {
-    console.error("Error en crearSocio:", error);
     res.status(400).json({ error: error.message });
   }
 };
 
-// Actualizar socio existente
+// PUT Partner
 export const actualizarSocio = async (req, res) => {
   try {
     const { id } = req.params;
     const socio = await SocioService.actualizarSocio(id, req.body);
-    res.json({ msg: "Socio actualizado correctamente", socio });
+    res.json(socio);
   } catch (error) {
     res.status(404).json({ error: error.message });
   }
 };
 
-// Eliminar socio
+// DELETE Partner
 export const eliminarSocio = async (req, res) => {
   try {
     const { id } = req.params;

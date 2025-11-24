@@ -1,6 +1,6 @@
 import * as LibroService from "../services/libroService.js";
 
-// Obtener todos los libros
+// GET all Books
 export const getLibros = async (req, res) => {
   try {
     const libros = await LibroService.obtenerLibros();
@@ -10,7 +10,7 @@ export const getLibros = async (req, res) => {
   }
 };
 
-// Obtener libro por ID
+// GET Book by ID
 export const getLibroById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -21,7 +21,7 @@ export const getLibroById = async (req, res) => {
   }
 };
 
-// Crear un nuevo libro
+// POST new Book
 export const crearLibro = async (req, res) => {
   try {
     const nuevoLibro = await LibroService.crearLibro(req.body);
@@ -31,7 +31,7 @@ export const crearLibro = async (req, res) => {
   }
 };
 
-// Actualizar libro existente
+// PUT Books
 export const actualizarLibro = async (req, res) => {
   try {
     const { id } = req.params;
@@ -42,7 +42,7 @@ export const actualizarLibro = async (req, res) => {
   }
 };
 
-// Eliminar libro
+// DELETE Book
 export const eliminarLibro = async (req, res) => {
   try {
     const { id } = req.params;

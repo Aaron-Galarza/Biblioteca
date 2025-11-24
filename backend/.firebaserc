@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "biblioteca-58b5c"
-  }
+    "default": "biblioteca-58b5c",
+    "biblioteca": "biblioteca-58b5c"
+  },
+  "targets": {},
+  "etags": {}
 }

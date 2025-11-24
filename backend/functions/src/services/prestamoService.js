@@ -1,4 +1,4 @@
-// C:\Users\Usuario\Desktop\Aaron\PRACTICAS\BibliotecaApp\backend\src\services\prestamoService.js
+// ..backend/src/services/prestamoService.js
 
 import { db } from "../config/firebase.js";
 

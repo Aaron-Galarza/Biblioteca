@@ -1,11 +1,5 @@
 import express from "express";
-import {
-  getSocios,
-  getSocioById,
-  crearSocio,
-  actualizarSocio,
-  eliminarSocio,
-} from "../controllers/socioController.js";
+import { getSocios, getSocioById, crearSocio, actualizarSocio, eliminarSocio } from "../controllers/socioController.js";
 
 const router = express.Router();
 

@@ -1,4 +1,4 @@
-// C:\Users\Usuario\Desktop\Aaron\PRACTICAS\BibliotecaApp\backend\src\services\multaService.js
+// ..backend/src/services/multaService.js
 
 import { db } from "../config/firebase.js";
 
@@ -37,9 +37,8 @@ export const obtenerMultas = async () => {
 };
 
 export const crearMulta = async ({ idSocio, motivo, monto, fecha }) => {
-  if (!idSocio || !motivo || !monto || !fecha) {
-    throw new Error("Datos incompletos para registrar la multa");
-  }
+  // TODO: Add JOI here i guess
+  if (!idSocio || !motivo || !monto || !fecha) { throw new Error("Datos incompletos para registrar la multa");}
 
   // Verificar si el socio existe antes de crear la multa (opcional pero recomendado)
   const socioDoc = await sociosCollection.doc(idSocio).get();
