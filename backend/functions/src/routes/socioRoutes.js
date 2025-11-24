@@ -9,6 +9,8 @@ import {
 
 const router = express.Router();
 
+// TODO: improve routes for one/many methods if possible. Maybe dynamic routing
+
 router.get("/", getSocios);
 router.get("/:id", getSocioById);
 router.post("/", crearSocio);

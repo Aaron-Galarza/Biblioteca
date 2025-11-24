@@ -1,39 +1,37 @@
-// C:\Users\Usuario\Desktop\Aaron\PRACTICAS\BibliotecaApp\backend\functions\index.js
+// ..backend/functions/index.js
 
 import express from "express";
 import cors from "cors";
-// Importa las funciones de firebase
 import * as functions from "firebase-functions"; 
 
-
-import libroRoutes from "./src/routes/libroRoutes.js";  // ✅ ANTES: ../src/...
-import socioRoutes from "./src/routes/socioRoutes.js";  // ✅
-import prestamoRoutes from "./src/routes/prestamoRoutes.js"; // ✅
-import multaRoutes from "./src/routes/multaRoutes.js"; // ✅
+import libroRoutes from "./src/routes/libroRoutes.js";
+import socioRoutes from "./src/routes/socioRoutes.js"; // TODO: From socio to user?
+import prestamoRoutes from "./src/routes/prestamoRoutes.js";
+import multaRoutes from "./src/routes/multaRoutes.js";
 import importRoutes from "./src/routes/importRoutes.js"
 
 const app = express();
 
-app.use(cors({ origin: true }));
+app.use(cors({ origin: true })); // TODO: Add METHODS & origin: "*"
 app.use(express.json());
 
-// Endpoints principales
-app.use("/api/libros", libroRoutes);
+// Principal Endpoints
+app.use("/api/libros", libroRoutes); // TODO: Translate endpoint to english?
 app.use("/api/socios", socioRoutes);
 app.use("/api/prestamos", prestamoRoutes);
 app.use("/api/multas", multaRoutes);
 
 // Ruta temporal para la carga inicial de datos
-app.use("/api/import", importRoutes); 
+app.use("/api/import", importRoutes); // TODO: Remove? Use for dev only?
 
-// Manejo de errores (Middleware de Express)
+// Error Handler - Express Middleware
 app.use((err, req, res, next) => {
   console.error(" Error:", err.message);
-  // Determina el código de estado basado en el mensaje de error para dar una mejor respuesta REST
+  // Determine the status code based on the error message to provide a better REST response
   const statusCode = err.message.includes("no encontrado") || err.message.includes("existe") ? 404 : 500;
   res.status(statusCode).json({ error: err.message });
 });
 
 
-// 🚀 Exportamos la aplicación Express como una sola función HTTP para Firebase
+// Export the Express application as a single HTTP function for Firebase
 export const api = functions.https.onRequest(app);

@@ -27,9 +27,9 @@ export const crearSocio = async (req, res) => {
     const { nombre, dni, email, telefono } = req.body;
 
     // Validaciones básicas
-    if (!nombre || !dni) {
-      return res.status(400).json({ error: "El nombre y el DNI son obligatorios" });
-    }
+    // if (!nombre || !dni) { // TODO: Only add JOI btw
+    //   return res.status(400).json({ error: "El nombre y el DNI son obligatorios" });
+    // }
 
     const socio = await SocioService.registrarSocio({ nombre, dni, email, telefono });
     res.status(201).json({
