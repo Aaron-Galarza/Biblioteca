@@ -32,12 +32,12 @@ export default function HomePage() {
   return (
     <div className="main-container">
       <div className="container">
-        <div className="page-header">
+        {/* <div className="page-header">
           <h1 className="page-title">Sistema de Gestión de Biblioteca</h1>
           <p className="page-subtitle">
             Plataforma integral para la administración moderna de bibliotecas
           </p>
-        </div>
+        </div> */}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {modules.map((module) => (

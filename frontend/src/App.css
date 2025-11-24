@@ -43,7 +43,8 @@ body {
 /* ===== LAYOUT PRINCIPAL ===== */
 .main-container {
   flex: 1;
-  padding: 100px 0 80px;
+  padding: 30px;
+  /* TODO: This thing SUCKS */
 }
 
 .container {
@@ -79,10 +80,11 @@ body {
   transition: var(--transition);
 }
 
-.navbar-brand:hover {
+/* NOTE: Removed hover */
+/* .navbar-brand:hover { 
   background: var(--primary-light);
   transform: translateY(-1px);
-}
+} */
 
 .navbar-brand::before {
   content: "📚";
@@ -609,6 +611,7 @@ body {
 .mt-2 { margin-top: 1rem; }
 .mt-3 { margin-top: 1.5rem; }
 .mt-4 { margin-top: 2rem; }
+.mt-5 { margin-top: 0rem; }
 
 .p-0 { padding: 0; }
 .p-1 { padding: 0.5rem; }
