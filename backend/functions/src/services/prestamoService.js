@@ -1,6 +1,7 @@
 // ..backend/src/services/prestamoService.js
 
 import { db } from "../config/firebase.js";
+import { FieldValue } from "firebase-admin/firestore";
 
 const prestamosCollection = db.collection("prestamos");
 const librosCollection = db.collection("libros");
@@ -56,8 +57,13 @@ export const crearPrestamo = async ({ idLibro, idSocio, fechaInicio, fechaDevolu
     const libroData = libroDoc.data();
     if (libroData.estado === "PRESTADO") throw new Error("El libro no está disponible");
 
-    // 1. Cambiar estado del Libro (dentro de la transacción)
-    t.update(libroRef, { estado: "PRESTADO" });
+    // 1 cambiamos el estado del libro, y incrementamos su popularidad
+    t.update(libroRef, { estado: "PRESTADO", popularidad: FieldValue.increment(1) });
+
+    // aumenta el contador del socio
+    t.update(socioRef, {
+        totalPrestamos: FieldValue.increment(1) //identifica su actividad (cuantos prestamos hizo)
+    });
 
     // 2. Crear el Préstamo (dentro de la transacción)
     const nuevoPrestamoRef = prestamosCollection.doc();

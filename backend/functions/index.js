@@ -10,6 +10,7 @@ import prestamoRoutes from "./src/routes/prestamoRoutes.js";
 import multaRoutes from "./src/routes/multaRoutes.js";
 import importRoutes from "./src/routes/importRoutes.js"
 import configRoutes from "./src/routes/configRouters.js"
+import reportesRoutes from "./src/routes/reportesRoutes.js"
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use("/socios", socioRoutes);
 app.use("/prestamos", prestamoRoutes);
 app.use("/multas", multaRoutes);
 app.use("/config", configRoutes )
+app.use("/reports", reportesRoutes)
 
 // Ruta temporal para la carga inicial de datos
 app.use("/import", importRoutes); // TODO: Remove? Use for dev only?
