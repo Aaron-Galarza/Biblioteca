@@ -1,4 +1,3 @@
-import cx from 'clsx';
 import { Button, Container, Overlay, Text, Title } from '@mantine/core';
 import classes from '../styles/HeroImageBackground.module.css';
 
@@ -8,9 +7,7 @@ export function HeroImageBackground() {
       <Overlay color="#000" opacity={0.65} zIndex={1} />
 
       <div className={classes.inner}>
-        <Title className={classes.title}>
-          Sistema de Gestión de Biblioteca{' '}
-        </Title>
+        <Title className={classes.title}> Sistema de Gestión de Biblioteca </Title>
 
         <Container size={640}>
           <Text size="lg" className={classes.description}>
