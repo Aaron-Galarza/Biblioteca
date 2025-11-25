@@ -4,6 +4,8 @@ import { db } from "../config/firebase.js";
 import Joi from "joi"
 
 const sociosCollection = db.collection("socios");
+const prestamosCollection = db.collection("prestamos")
+const multasCollection = db.collection("multas")
 
 // Convierte un documento de Firestore a un objeto con el ID de Socio (idSocio)
 const mapSocio = (doc) => ({ idSocio: doc.id, ...doc.data() });
@@ -107,3 +109,36 @@ export const eliminarSocio = async (id) => {
     throw error;
   }
 };
+
+// GET obtiene todos los préstamos (activos o cerrados) de un socio
+export const obtenerPrestamosSocio = async (idSocio) => {
+  const socioDoc = await sociosCollection.doc(idSocio).get()
+  if(!socioDoc.exists) {
+    throw new Error("Socio no encontrado");
+    
+  } 
+
+  const snapshot = await prestamosCollection
+    .where("idSocio", "==", idSocio)
+    .orderBy("fechaInicio", "desc")
+    .get()
+
+  return snapshot.docs.map(doc => ({ idPrestamo: doc.id, ...doc.data() }))
+
+}
+
+//GET obtiene todas las multas (activas o pagadas) de un socio.
+export const obtenerMultasSocio = async (idSocio) => {
+  const socioDoc = await sociosCollection.doc(idSocio).get()
+  if(!socioDoc.exists) {
+    throw new Error("Socio no encontrado");
+    
+  }
+
+  const snapshot = await multasCollection
+    .where("idSocio", "==", idSocio)
+    .orderBy("fecha", "desc")
+    .get()
+
+  return snapshot.docs.map(doc => ({idMulta: doc.id, ...doc.data() }))
+}

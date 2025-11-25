@@ -1,5 +1,13 @@
 import express from "express";
-import { getSocios, getSocioById, crearSocio, actualizarSocio, eliminarSocio } from "../controllers/socioController.js";
+import { 
+    getSocios,
+    getSocioById,
+    crearSocio,
+    actualizarSocio,
+    eliminarSocio,
+    obtenerPrestamosSocio,
+    obtenerMultasSocio
+} from "../controllers/socioController.js";
 
 const router = express.Router();
 
@@ -10,5 +18,7 @@ router.get("/:id", getSocioById);
 router.post("/", crearSocio);
 router.put("/:id", actualizarSocio);
 router.delete("/:id", eliminarSocio);
+router.get("/:id/prestamos", obtenerPrestamosSocio)
+router.get("/:id/multas", obtenerMultasSocio)
 
 export default router;

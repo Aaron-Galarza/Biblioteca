@@ -53,3 +53,23 @@ export const eliminarSocio = async (req, res) => {
     res.status(404).json({ error: error.message });
   }
 };
+
+export const obtenerPrestamosSocio = async (req, res) => {
+  try {
+    const idSocio = req.params.id
+    const prestamos = await SocioService.obtenerPrestamosSocio(idSocio)
+    res.json(prestamos)
+  } catch (error) {
+    res.status(404).json({error: error.message})
+  }
+}
+
+export const obtenerMultasSocio = async (req, res) => {
+    try {
+        const idSocio = req.params.id
+        const multas = await SocioService.obtenerMultasSocio(idSocio);
+        res.json(multas);
+    } catch (error) {
+        res.status(404).json({ error: error.message });
+    }
+};
