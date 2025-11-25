@@ -9,6 +9,7 @@ import socioRoutes from "./src/routes/socioRoutes.js"; // TODO: From socio to us
 import prestamoRoutes from "./src/routes/prestamoRoutes.js";
 import multaRoutes from "./src/routes/multaRoutes.js";
 import importRoutes from "./src/routes/importRoutes.js"
+import configRoutes from "./src/routes/configRouters.js"
 
 const app = express();
 
@@ -16,13 +17,14 @@ app.use(cors({ origin: true })); // TODO: Add METHODS & origin: "*"
 app.use(express.json());
 
 // Principal Endpoints
-app.use("/api/libros", libroRoutes); // TODO: Translate endpoint to english?
-app.use("/api/socios", socioRoutes);
-app.use("/api/prestamos", prestamoRoutes);
-app.use("/api/multas", multaRoutes);
+app.use("/libros", libroRoutes); // TODO: Translate endpoint to english?
+app.use("/socios", socioRoutes);
+app.use("/prestamos", prestamoRoutes);
+app.use("/multas", multaRoutes);
+app.use("/config", configRoutes )
 
 // Ruta temporal para la carga inicial de datos
-app.use("/api/import", importRoutes); // TODO: Remove? Use for dev only?
+app.use("/import", importRoutes); // TODO: Remove? Use for dev only?
 
 // Error Handler - Express Middleware
 app.use((err, req, res, next) => {
