@@ -26,10 +26,27 @@ export const crearLibro = async (data) => {
   return mapLibro(nuevoLibro);
 };
 
-// Listar todos los libros
-export const obtenerLibros = async () => {
-  const snapshot = await librosCollection.orderBy("titulo").get();
-  return snapshot.docs.map(mapLibro);
+export const getLibros = async (filtros) => {
+  //traemos los libro ordenados
+  const snapshot = await librosCollection.orderBy("titulo", "asc").get();
+  let libros = snapshot.docs.map(mapLibro);
+
+  //se filtra por titulo
+  if (filtros.titulo) {
+    libros = libros.filter(libro => libro.titulo.toLowerCase().includes(filtros.titulo.toLowerCase()));
+  }
+
+  //se filtra por autor
+  if (filtros.autor) {
+    libros = libros.filter(libro => libro.autor.toLowerCase().includes(filtros.autor.toLowerCase()));
+  }
+
+  if (filtros.estado) {
+    libros = libros.filter(libro => libro.estado.toLowerCase().includes(filtros.estado.toLowerCase()) )
+  }
+  
+  //se devuelve lo filtrado, si no se llego a filtrar nada devuelve toda la coleccion
+  return libros;
 };
 
 // Obtener libro por ID

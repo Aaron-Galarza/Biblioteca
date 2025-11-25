@@ -1,9 +1,10 @@
 import * as LibroService from "../services/libroService.js";
 
-// GET all Books
+// GET all Books - with filters
 export const getLibros = async (req, res) => {
   try {
-    const libros = await LibroService.obtenerLibros();
+    const { titulo, autor, estado } = req.query
+    const libros = await LibroService.getLibros({ titulo, autor, estado });
     res.json(libros);
   } catch (error) {
     res.status(500).json({ error: error.message });
