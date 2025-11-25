@@ -11,7 +11,7 @@ const mapSocio = (doc) => ({ idSocio: doc.id, ...doc.data() });
 const schema = Joi.object().keys({
   dni: Joi.number().integer().min(9).max(9),
   nombre: Joi.string(),
-  email: Joi.email(),
+  email: Joi.string().email({ tlds: { allow: false } }).required(),
   telefono: Joi.string()
 }).required()
 
@@ -19,16 +19,20 @@ const schema = Joi.object().keys({
 export const registrarSocio = async (data) => {
   
   try {
+    //validamos aca
+    const { error } = schema.validate(data);
+    if (error) {
+      throw new Error(`Error de validación: ${error.details[0].message}`);
 
+    }
+
+    //si todo funciona, arrancamos con la creacion
     const { dni, nombre, email, telefono } = data;
 
-    schema.validate(data); // TODO: Test if works pls
-
-    const existeQuery = await sociosCollection.where("dni", "==", dni).limit(1).get(); // TODO: With phone also i guess
+    const existeQuery = await sociosCollection.where("dni", "==", dni).limit(1).get();
     if (!existeQuery.empty) throw new Error("El socio ya está registrado");
 
-    // Generar el numeroSocio (simulando el hook beforeCreate de Sequelize)
-    // Usamos una transacción para asegurar que la generación del número sea atómica
+    let nuevoSocioData = null; // Variable para almacenar los datos que se retornarán
 
     await db.runTransaction(async (t) => {
       // 1. Obtain last numeroSocio
@@ -44,11 +48,13 @@ export const registrarSocio = async (data) => {
 
       // 2. create Partner
       const nuevoSocioRef = sociosCollection.doc(); // Firestore genera el ID
-      t.set(nuevoSocioRef, { dni, nombre, email, telefono, numeroSocio });
+      const dataToSet = { dni, nombre, email, telefono, numeroSocio };
+      t.set(nuevoSocioRef, dataToSet)
 
+      nuevoSocioData = { idSocio: nuevoSocioRef.id, ...dataToSet };
     });
     
-    return { idSocio: nuevoSocioRef.id, dni, nombre, email, telefono, numeroSocio };
+    return nuevoSocioData; //retornamos el nuevo socio
   } catch (error) {
     throw error;
   }
