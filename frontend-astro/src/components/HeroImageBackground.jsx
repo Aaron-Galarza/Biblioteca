@@ -11,13 +11,13 @@ export function HeroImageBackground() {
 
         <Container size={640}>
           <Text size="lg" className={classes.description}>
-            Plataforma integral para la administración moderna de bibliotecas.
+            Plataforma integral para la administración moderna de bibliotecas
           </Text>
         </Container>
 
         <div className={classes.controls}>
-          <Button className={classes.control} variant="white" size="lg">
-            Get started
+          <Button className={classes.control}  variant="filled" color="rgba(71, 47, 22, 1)" size="lg">
+            Comenzar
           </Button>
         </div>
       </div>
