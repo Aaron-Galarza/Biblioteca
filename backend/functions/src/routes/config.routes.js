@@ -1,7 +1,7 @@
 import { Router } from "express"
 import { 
     getConfig
-} from "../controllers/configController.js"
+} from "../controllers/config.controller.js"
 
 const router = Router()
 

@@ -1,6 +1,6 @@
 // ..backend/src/services/multaService.js
 
-import { db } from "../config/firebase.js";
+import { db } from "../config/firebase.config.js";
 
 const multasCollection = db.collection("multas");
 const sociosCollection = db.collection("socios"); // Necesario para la relación

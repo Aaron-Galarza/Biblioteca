@@ -1,4 +1,4 @@
-import * as Service from "../services/reportesService.js"
+import * as Service from "../services/reports.service.js"
 
 export const LibrosPopulares = async (req, res) => {
     try {

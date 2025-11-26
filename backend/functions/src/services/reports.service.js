@@ -1,4 +1,4 @@
-import { db } from "../config/firebase.js";
+import { db } from "../config/firebase.config.js";
 
 const prestamosCollection = db.collection("prestamos");
 const librosCollection = db.collection("libros");

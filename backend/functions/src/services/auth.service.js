@@ -1,6 +1,6 @@
 // ..backend/src/services/auth.service.js
 
-import { db } from "../config/firebase.js";
+import { db } from "../config/firebase.config.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 

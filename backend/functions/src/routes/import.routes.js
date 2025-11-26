@@ -1,7 +1,7 @@
 // ..backend/functions/src/routes/importRoutes.js
 
 import { Router } from "express";
-import { loadInitialData } from "../controllers/importController.js";
+import { loadInitialData } from "../controllers/import.controller.js";
 
 const router = Router();
 

@@ -1,5 +1,5 @@
 import express from "express";
-import { getMultas, crearMulta, cancelarMulta } from "../controllers/multaController.js";
+import { getMultas, crearMulta, cancelarMulta } from "../controllers/fines.controller.js";
 
 const router = express.Router();
 

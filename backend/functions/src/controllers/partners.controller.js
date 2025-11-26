@@ -1,4 +1,4 @@
-import * as SocioService from "../services/socioService.js";
+import * as SocioService from "../services/partners.service.js";
 
 // GET Partner
 export const getSocios = async (req, res) => {

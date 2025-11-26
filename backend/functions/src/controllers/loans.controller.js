@@ -1,4 +1,4 @@
-import * as PrestamoService from "../services/prestamoService.js";
+import * as PrestamoService from "../services/loans.service.js";
 
 export const obtenerPrestamos = async (req, res) => {
   try {
