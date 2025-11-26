@@ -1,5 +1,10 @@
 import express from "express";
-import { obtenerPrestamos, crearPrestamo, devolverLibro, extenderLoan } from "../controllers/loans.controller.js";
+import {
+    obtenerPrestamos,
+    crearPrestamo,
+    devolverLibro,
+    extenderLoan
+ } from "../controllers/loans.controller.js";
 
 const router = express.Router();
 

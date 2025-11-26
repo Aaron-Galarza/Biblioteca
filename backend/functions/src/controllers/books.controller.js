@@ -68,10 +68,25 @@ export const reservarLibro = async (req, res) => {
       return res.json({error: "id del socio es obligatorio"})
     }
     
-    const reserva = await LibroService.postReserva({idLibro, idSocio})
+    const reserva = await BookService.postReserva({idLibro, idSocio})
     return res.json(reserva)
   } catch (error) {
     res.status(400).json({error: error.message})
   }
 }
 
+
+export const renounceLoanReserv = async (req, res) => {
+  try {
+    const {idReserva} = req.params
+
+    if (!idReserva) {
+      return res.status(400).json({error: "El ID de la Reserva es obligatorio"})
+    }
+
+    const renuncia = await BookService.renounceLoan(idReserva)
+    res.json(renuncia)  
+  } catch (error) {
+    res.status(400).json({error: error.message})
+  }
+} 

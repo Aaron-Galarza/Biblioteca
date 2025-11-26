@@ -1,7 +1,7 @@
 import { db } from "../config/firebase.config.js";
 import { FieldValue } from "firebase-admin/firestore";
 
-import { calcularNuevaFechaVencimiento, toJSDate } from "../../utils/dateUtils.js"; 
+import { calcularNuevaFechaVencimiento, toJSDate } from "../utils/dateUtils.js"; 
 
 const prestamosCollection = db.collection("prestamos");
 const librosCollection = db.collection("libros");

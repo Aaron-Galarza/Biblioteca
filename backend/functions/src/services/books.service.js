@@ -150,3 +150,53 @@ export const postReserva = async ({idLibro, idSocio}) => {    
     // Devolvemos el objeto de la reserva, incluyendo el ID
     return reservaData;
 };
+
+export const renounceLoan = async (idReserva) => {
+  let resultado = { msg: "Reserva cancelada exitosamente" };
+
+  await db.runTransaction(async (t) => {
+    const reservaRef = reservasCollection.doc(idReserva);
+    const reservaDoc = await t.get(reservaRef);
+  
+    if (!reservaDoc.exists) {
+      throw new Error("Reserva no encontrada.");
+    }
+  
+    const reservaData = reservaDoc.data();
+    if (reservaData.estadoReserva !== "ACTIVA") {
+      throw new Error("Solo se pueden cancelar reservas activas.");
+    }
+  
+    const idLibro = reservaData.idLibro;
+    const libroRef = librosCollection.doc(idLibro);
+    const libroDoc = await t.get(libroRef);
+    const libroData = libroDoc.data();
+
+    //cancelamos la reserva de idReserva
+    t.update(reservaRef, {
+      estadoReserva: "CANCELADA",
+      fechaCancelacion: FieldValue.serverTimestamp()
+    });
+
+    //eliminamos el idReserva del la colaRervas de Libros
+    const colaReservas = libroData.colaReservas || [];
+    t.update(libroRef, {
+      colaReservas: FieldValue.arrayRemove(idReserva),
+      conteoReservas: FieldValue.increment(-1)
+    });
+
+    //IMPORTANTE si al eliminar el idRerserva de la cola y aun hay gente, queda como reservado
+    if (colaReservas[0] === idReserva && libroData.estado === "RESERVADO") {
+      const colaDespues = colaReservas.filter(id => id !== idReserva);
+    
+      //pero si YA NO HAY NADIE MAS RESERVANDO el libro, pasa a estar DISPONIBLE
+      if (colaDespues.length === 0) {
+        
+        t.update(libroRef, { estado: "DISPONIBLE" });
+        resultado.msg += " El libro ahora está DISPONIBLE.";
+      } 
+    }
+  });
+  
+  return resultado
+}
