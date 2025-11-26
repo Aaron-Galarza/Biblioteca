@@ -1,4 +1,4 @@
-import * as MultaService from "../services/multaService.js";
+import * as MultaService from "../services/fines.service.js";
 
 export const getMultas = async (req, res) => {
   try {

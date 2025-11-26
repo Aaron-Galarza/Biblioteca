@@ -4,29 +4,37 @@ import express from "express";
 import cors from "cors";
 import * as functions from "firebase-functions"; 
 
-import libroRoutes from "./src/routes/libroRoutes.js";
-import socioRoutes from "./src/routes/socioRoutes.js"; // TODO: From socio to user?
-import prestamoRoutes from "./src/routes/prestamoRoutes.js";
-import multaRoutes from "./src/routes/multaRoutes.js";
-import importRoutes from "./src/routes/importRoutes.js"
-import configRoutes from "./src/routes/configRouters.js"
-import reportesRoutes from "./src/routes/reportesRoutes.js"
+import booksRoutes from "./src/routes/books.routes.js";
+import partnersRoutes from "./src/routes/partners.routes.js"; // TODO: From partners to user?
+import loansRoutes from "./src/routes/loans.routes.js";
+import finesRoutes from "./src/routes/fines.routes.js";
+import importRoutes from "./src/routes/import.routes.js"
+import configRoutes from "./src/routes/config.routes.js"
+import reportsRoutes from "./src/routes/reports.routes.js"
+import authRoutes from "./src/routes/auth.routes.js";
 
 const app = express();
 
-app.use(cors({ origin: true })); // TODO: Add METHODS & origin: "*"
+const corsOptions = {
+  origin: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Principal Endpoints
-app.use("/libros", libroRoutes); // TODO: Translate endpoint to english?
-app.use("/socios", socioRoutes);
-app.use("/prestamos", prestamoRoutes);
-app.use("/multas", multaRoutes);
+app.use("/books", booksRoutes);
+app.use("/partners", partnersRoutes);     // Socios
+app.use("/loans", loansRoutes);           // Prestamos
+app.use("/fines", finesRoutes);           // Multas
 app.use("/config", configRoutes )
-app.use("/reports", reportesRoutes)
+app.use("/reports", reportsRoutes)
+app.use("/auth", authRoutes);             // Auth routes
 
 // Ruta temporal para la carga inicial de datos
-app.use("/import", importRoutes); // TODO: Remove? Use for dev only?
+app.use("/import", importRoutes); // NOTE: Use for dev only
 
 // Error Handler - Express Middleware
 app.use((err, req, res, next) => {
@@ -35,7 +43,6 @@ app.use((err, req, res, next) => {
   const statusCode = err.message.includes("no encontrado") || err.message.includes("existe") ? 404 : 500;
   res.status(statusCode).json({ error: err.message });
 });
-
 
 // Export the Express application as a single HTTP function for Firebase
 export const api = functions.https.onRequest(app);

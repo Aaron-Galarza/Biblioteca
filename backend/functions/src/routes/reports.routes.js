@@ -3,7 +3,7 @@ import {
     LibrosPopulares,
     SociosActivos,
     alertasVencidas
-} from "../controllers/reportesController.js"
+} from "../controllers/reports.controller.js"
 
 const router = Router()
 

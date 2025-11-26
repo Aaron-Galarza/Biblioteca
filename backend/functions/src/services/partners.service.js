@@ -1,6 +1,6 @@
 // ..backend/src/services/socioService.js
 
-import { db } from "../config/firebase.js";
+import { db } from "../config/firebase.config.js";
 import Joi from "joi"
 
 const sociosCollection = db.collection("socios");

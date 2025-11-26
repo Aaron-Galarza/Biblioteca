@@ -1,6 +1,6 @@
 // ..backend/src/services/prestamoService.js
 
-import { db } from "../config/firebase.js";
+import { db } from "../config/firebase.config.js";
 import { FieldValue } from "firebase-admin/firestore";
 
 const prestamosCollection = db.collection("prestamos");

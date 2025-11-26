@@ -1,4 +1,4 @@
-import { db } from "../config/firebase.js";
+import { db } from "../config/firebase.config.js";
 
 export const getConfig = async (req, res) => {
     try {

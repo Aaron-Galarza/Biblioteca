@@ -1,6 +1,6 @@
 // C:\Users\Usuario\Desktop\Aaron\PRACTICAS\BibliotecaApp\backend\functions\src\controllers\importController.js
 
-import { db } from "../config/firebase.js";
+import { db } from "../config/firebase.config.js";
 import { createRequire } from "module";
 
 // Necesitamos 'require' para cargar el JSON plano, que es la forma más fácil.

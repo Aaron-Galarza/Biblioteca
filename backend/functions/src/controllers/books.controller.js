@@ -1,54 +1,53 @@
-import { error } from "firebase-functions/logger";
-import * as LibroService from "../services/libroService.js";
+import * as BookService from "../services/books.service.js";
 
 // GET all Books - with filters
-export const getLibros = async (req, res) => {
+export const getBooks = async (req, res) => {
   try {
     const { titulo, autor, estado } = req.query
-    const libros = await LibroService.getLibros({ titulo, autor, estado });
-    res.json(libros);
+    const books = await BookService.getBooks({ titulo, autor, estado });
+    res.json(books);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
 // GET Book by ID
-export const getLibroById = async (req, res) => {
+export const getBooksById = async (req, res) => {
   try {
     const { id } = req.params;
-    const libro = await LibroService.obtenerLibroPorId(id);
-    res.json(libro);
+    const book = await BookService.getBookById(id);
+    res.json(book);
   } catch (error) {
     res.status(404).json({ error: error.message });
   }
 };
 
 // POST new Book
-export const crearLibro = async (req, res) => {
+export const postBook = async (req, res) => {
   try {
-    const nuevoLibro = await LibroService.crearLibro(req.body);
-    res.status(201).json({ msg: "Libro agregado correctamente", nuevoLibro });
+    const newBook = await BookService.createBook(req.body);
+    res.status(201).json({ msg: "Libro agregado correctamente", newBook });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
 // PUT Books
-export const actualizarLibro = async (req, res) => {
+export const putBook = async (req, res) => {
   try {
     const { id } = req.params;
-    const libroActualizado = await LibroService.actualizarLibro(id, req.body);
-    res.json({ msg: "Libro actualizado correctamente", libroActualizado });
+    const updatedBook = await BookService.updateBook(id, req.body);
+    res.json({ msg: "Libro actualizado correctamente", updatedBook });
   } catch (error) {
     res.status(404).json({ error: error.message });
   }
 };
 
 // DELETE Book
-export const eliminarLibro = async (req, res) => {
+export const deleteBooks = async (req, res) => {
   try {
     const { id } = req.params;
-    await LibroService.eliminarLibro(id);
+    await BookService.deleteBook(id);
     res.json({ msg: "Libro eliminado correctamente" });
   } catch (error) {
     res.status(404).json({ error: error.message });

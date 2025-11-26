@@ -7,7 +7,7 @@ import {
     eliminarSocio,
     obtenerPrestamosSocio,
     obtenerMultasSocio
-} from "../controllers/socioController.js";
+} from "../controllers/partners.controller.js";
 
 const router = express.Router();
 
