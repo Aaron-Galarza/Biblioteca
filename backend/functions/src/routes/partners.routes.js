@@ -20,5 +20,6 @@ router.put("/:id", actualizarSocio);
 router.delete("/:id", eliminarSocio);
 router.get("/:id/prestamos", obtenerPrestamosSocio)
 router.get("/:id/multas", obtenerMultasSocio)
+router.get("/:id/notificaciones", obtenerNotificacionesSocio)
 
 export default router;

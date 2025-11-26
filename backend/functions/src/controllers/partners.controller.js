@@ -73,3 +73,13 @@ export const obtenerMultasSocio = async (req, res) => {
         res.status(404).json({ error: error.message });
     }
 };
+
+export const obtenerNotificacionesSocio = async (req, res) => {
+    try {
+        const idSocio = req.params.id
+        const notificaciones = await SocioService.obtenerNotificacionesSocio(idSocio);
+        res.json(notificaciones);
+    } catch (error) {
+        res.status(404).json({ error: error.message });
+    }
+};

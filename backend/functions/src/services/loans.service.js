@@ -15,6 +15,7 @@ const fetchRelatedData = async (prestamos) => {
     return Promise.all(prestamos.map(async (prestamo) => {
         // Fetch Socio
         const socioDoc = await sociosCollection.doc(prestamo.idSocio).get();
+        
         if (socioDoc.exists) {
             prestamo.Socio = { idSocio: socioDoc.id, nombre: socioDoc.data().nombre, numeroSocio: socioDoc.data().numeroSocio };
         }
