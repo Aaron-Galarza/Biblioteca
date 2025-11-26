@@ -21,8 +21,8 @@ export const crearPrestamo = async (req, res) => {
 
 export const devolverLibro = async (req, res) => {
   try {
-    const { idPrestamo } = req.params;
-    const resultado = await PrestamoService.cerrarPrestamo(idPrestamo);
+    const { idLoan } = req.params;
+    const resultado = await PrestamoService.cerrarPrestamo(idLoan);
     res.json(resultado);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -31,13 +31,13 @@ export const devolverLibro = async (req, res) => {
 
 export const extenderLoan = async (req, res) => {
   try {
-    const {idPrestamo} = req.params
+    const {idLoan} = req.params
 
-    if (!idPrestamo) {
+    if (!idLoan) {
       return res.status(400).json({error: "El ID del prestamos es obligatorio"})
     }
 
-    const nuevaFecha = await PrestamoService.extenderPrestamo(idPrestamo)
+    const nuevaFecha = await PrestamoService.extenderPrestamo(idLoan)
     res.json(nuevaFecha)  
   } catch (error) {
     res.status(400).json({error: error.message})

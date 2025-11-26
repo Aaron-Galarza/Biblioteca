@@ -10,17 +10,21 @@ import {
     obtenerNotificacionesSocio
 } from "../controllers/partners.controller.js";
 
+import { verifyToken, isAdmin, isUser } from "../middlewares/auth.middleware.js";
+
 const router = express.Router();
 
 // TODO: improve routes for one/many methods if possible. Maybe dynamic routing
 
 router.get("/", getSocios);
 router.get("/:id", getSocioById);
-router.post("/", crearSocio);
-router.put("/:id", actualizarSocio);
-router.delete("/:id", eliminarSocio);
-router.get("/:id/prestamos", obtenerPrestamosSocio)
-router.get("/:id/multas", obtenerMultasSocio)
-router.get("/:id/notificaciones", obtenerNotificacionesSocio)
+
+router.post("/", verifyToken, isAdmin, crearSocio);                                           // Protected route (Admin)
+router.put("/:id", verifyToken, isAdmin, actualizarSocio);                                    // Protected route (Admin)  
+router.delete("/:id", verifyToken, isAdmin, eliminarSocio);                                   // Protected route (Admin)
+
+router.get("/:id/loan", verifyToken, isUser, obtenerPrestamosSocio)                           // Protected route (User)
+router.get("/:id/fines", verifyToken, isUser, obtenerMultasSocio)                             // Protected route (User)
+router.get("/:id/notifications", verifyToken, isUser, obtenerNotificacionesSocio)             // Protected route (User)
 
 export default router;

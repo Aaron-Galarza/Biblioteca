@@ -5,8 +5,10 @@ import bcrypt from "bcryptjs";
 import Joi from "joi";
 import jwt from "jsonwebtoken";
 
+const sociosCollection = db.collection("socios");
+
 const registerSchema = Joi.object({
-  name: Joi.string().min(3).required().messages({
+  nombre: Joi.string().min(3).required().messages({
     'string.base': `"nombre" debe ser un tipo de 'texto'`,
     'string.empty': `"nombre" no puede estar vacío`,
     'string.min': `"nombre" debe tener una longitud mínima de {#limit}`,
@@ -19,7 +21,9 @@ const registerSchema = Joi.object({
   password: Joi.string().min(6).required().messages({
     'string.min': `"contraseña" debe tener una longitud mínima de {#limit}`,
     'any.required': `"contraseña" es un campo obligatorio`
-  })
+  }),
+  dni: Joi.number().integer().required(),
+  telefono: Joi.string().required()
 });
 
 const loginSchema = Joi.object({
@@ -40,12 +44,22 @@ export const register = async (data) => {
   if (error) { throw new Error(error.details[0].message); }
   const { email, password, name } = data;
 
-  const userRef = db.collection("users").doc(email);
+  const userRef = db.collection("socios").doc(email);
   const doc = await userRef.get();
   if (doc.exists) { throw new Error("El usuario ya existe");}
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  const newUser = { email, password: hashedPassword, name };
+
+  const newUser = { 
+    nombre: data.nombre,
+    email: data.email,
+    dni: data.dni,
+    telefono: data.telefono,
+    password: hashedPassword,
+    role: "USER",
+    prestamos: 0
+    };
+
   await userRef.set(newUser);
   return { email, name };
 };
@@ -57,15 +71,23 @@ export const login = async (data) => {
   if (error) { throw new Error(error.details[0].message); }
   const { email, password } = data;
 
-  const userRef = db.collection("users").doc(email);
-  const doc = await userRef.get();
-  if (!doc.exists) { throw new Error("Usuario no encontrado"); }
+  const userQuery = await sociosCollection.where("email", "==", email).limit(1).get();
+  if (userQuery.empty) { throw new Error("Usuario no encontrado"); }
 
-  const userData = doc.data();
+  const userDoc = userQuery.docs[0];
+  const userData = userDoc.data();
+
   const isPasswordValid = await bcrypt.compare(password, userData.password);
   if (!isPasswordValid) { throw new Error("Contraseña incorrecta"); }
 
-  const token = jwt.sign({ email: userData.email, name: userData.name }, process.env.JWT_SECRET, { expiresIn: "1h" });
+  const payload = { 
+    idSocio: userDoc.id,
+    email: userData.email, 
+    nombre: userData.nombre,
+    role: userData.role || "USER"
+  };
+
+  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
   
   return token;
 };

@@ -8,14 +8,18 @@ import { getBooks,
     renounceLoanReserv
 } from "../controllers/books.controller.js";
 
+import { verifyToken, isAdmin, isUser } from "../middlewares/auth.middleware.js";
+
 const router = express.Router();
 
 router.get("/", getBooks);
 router.get("/:id", getBooksById);
-router.post("/", postBook);
-router.put("/:id", putBook);
-router.delete("/:id", deleteBooks);
-router.post("/:id/reserva", reservarLibro)
-router.post("/:idReserva/renounce", renounceLoanReserv)
+
+router.post("/", verifyToken, isAdmin, postBook);                                   // Protected route (Admin)
+router.put("/:id", verifyToken, isAdmin, putBook);                                  // Protected route (Admin)
+router.delete("/:id", verifyToken, isAdmin, deleteBooks);                           // Protected route (Admin)
+
+router.post("/:id/booking", verifyToken, isAdmin, reservarLibro)                    // Protected route (User)
+router.post("/:idBooking/cancel", verifyToken, isUser, renounceLoanReserv)          // Protected route (User)
 
 export default router;

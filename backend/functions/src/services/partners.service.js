@@ -7,29 +7,31 @@ const sociosCollection = db.collection("socios");
 const prestamosCollection = db.collection("prestamos")
 const multasCollection = db.collection("multas")
 
+const socioSchema = Joi.object({
+  dni: Joi.number().integer().required(),
+  nombre: Joi.string().min(3).required(),
+  email: Joi.string().email({ tlds: { allow: false } }).required(),
+  telefono: Joi.string().required(),
+  // Estos campos vienen del servicio de auth, aquí solo los aceptamos
+  password: Joi.string().required(),
+  role: Joi.string().required(),
+});
+
 // Convierte un documento de Firestore a un objeto con el ID de Socio (idSocio)
 const mapSocio = (doc) => ({ idSocio: doc.id, ...doc.data() });
-
-const schema = Joi.object().keys({
-  dni: Joi.number().integer().min(9).max(9),
-  nombre: Joi.string(),
-  email: Joi.string().email({ tlds: { allow: false } }).required(),
-  telefono: Joi.string()
-}).required()
 
 // Crear socio (con generación automática de número de socio)
 export const registrarSocio = async (data) => {
   
   try {
     //validamos aca
-    const { error } = schema.validate(data);
+    const { error } = socioSchema.validate(data);
     if (error) {
       throw new Error(`Error de validación: ${error.details[0].message}`);
 
     }
 
-    //si todo funciona, arrancamos con la creacion
-    const { dni, nombre, email, telefono } = data;
+     const { dni, nombre, email, telefono, password, role } = data;
 
     const existeQuery = await sociosCollection.where("dni", "==", dni).limit(1).get();
     if (!existeQuery.empty) throw new Error("El socio ya está registrado");
@@ -37,7 +39,7 @@ export const registrarSocio = async (data) => {
     let nuevoSocioData = null; // Variable para almacenar los datos que se retornarán
 
     await db.runTransaction(async (t) => {
-      // 1. Obtain last numeroSocio
+
       const ultimoSocioQuery = await sociosCollection.orderBy("numeroSocio", "desc").limit(1).get();
       let nuevoNumero = 1;
 
@@ -48,14 +50,14 @@ export const registrarSocio = async (data) => {
 
       const numeroSocio = nuevoNumero.toString().padStart(4, "0");
 
-      // 2. create Partner
       const nuevoSocioRef = sociosCollection.doc(); // Firestore genera el ID
-      const dataToSet = { dni, nombre, email, telefono, numeroSocio };
+      const dataToSet = { dni, nombre, email, telefono, numeroSocio, password, role, prestamos: 0 };
       t.set(nuevoSocioRef, dataToSet)
 
       nuevoSocioData = { idSocio: nuevoSocioRef.id, ...dataToSet };
     });
-    
+
+    delete nuevoSocioData.password;
     return nuevoSocioData; //retornamos el nuevo socio
   } catch (error) {
     throw error;

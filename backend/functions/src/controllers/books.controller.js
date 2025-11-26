@@ -78,13 +78,13 @@ export const reservarLibro = async (req, res) => {
 
 export const renounceLoanReserv = async (req, res) => {
   try {
-    const {idReserva} = req.params
+    const {idBooking} = req.params
 
-    if (!idReserva) {
+    if (!idBooking) {
       return res.status(400).json({error: "El ID de la Reserva es obligatorio"})
     }
 
-    const renuncia = await BookService.renounceLoan(idReserva)
+    const renuncia = await BookService.renounceLoan(idBooking)
     res.json(renuncia)  
   } catch (error) {
     res.status(400).json({error: error.message})
