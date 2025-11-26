@@ -1,8 +1,12 @@
 // C:\Users\Usuario\Desktop\Aaron\PRACTICAS\BibliotecaApp\backend\src\services\libroService.js
 
 import { db } from "../config/firebase.js";
+import { FieldValue } from "firebase-admin/firestore";
 
 const librosCollection = db.collection("libros");
+const sociosCollection = db.collection("socios");
+const reservasCollection = db.collection("reservas");
+const prestamosCollection = db.collection("prestamos");
 
 // Convierte un documento de Firestore a un objeto con el ID de Libro (idLibro)
 const mapLibro = (doc) => ({ idLibro: doc.id, ...doc.data() });
@@ -75,4 +79,72 @@ export const eliminarLibro = async (id) => {
   await libroRef.delete();
 };
 
-// El resto de las funciones (prestarLibro, devolverLibro, etc.) se manejarán en prestamoService para la lógica transaccional.
+export const postReserva = async ({idLibro, idSocio}) => {    
+    // --- FASE 1: LECTURAS DE VALIDACIÓN RÁPIDAS (Optimizadas con Promise.all) ---
+
+    // Leemos el libro, el socio, y buscamos si ya existe una reserva activa o un préstamo activo.
+    const [
+        libroDoc,
+        socioDoc,
+        existingReservationSnapshot,
+        existingLoanSnapshot
+    ] = await Promise.all([
+        librosCollection.doc(idLibro).get(),
+        sociosCollection.doc(idSocio).get(),
+        reservasCollection.where('idLibro', '==', idLibro).where('idSocio', '==', idSocio).where('estadoReserva', '==', 'ACTIVA').limit(1).get(),
+        prestamosCollection.where('idLibro', '==', idLibro).where('idSocio', '==', idSocio).where('estadoPrestamo', '==', 'ACTIVO').limit(1).get()
+    ]);
+    
+    // --- FASE 2: VALIDACIONES DE REGLAS DE NEGOCIO ---
+    
+    if (!libroDoc.exists) throw new Error("Libro no encontrado.");
+    if (!socioDoc.exists) throw new Error("Socio no encontrado.");
+
+    if (existingReservationSnapshot.size > 0) {
+        throw new Error("Ya tienes una reserva activa para este libro.");
+    }
+    if (existingLoanSnapshot.size > 0) {
+        throw new Error("Ya tienes un préstamo activo de este libro.");
+    }
+
+    const libroData = libroDoc.data();
+    if (libroData.estado === "DISPONIBLE") {
+        throw new Error("El libro está disponible. ¡Puedes prestarlo directamente!");
+    }
+
+    const tituloLibro = libroData.titulo;
+    const nombreSocio = socioDoc.data().nombre;
+    
+    // --- FASE 3: TRANSACCIÓN CRÍTICA (Escrituras Atómicas) ---
+
+    let reservaData = {};
+
+    await db.runTransaction(async (t) => {
+        const libroRef = librosCollection.doc(idLibro);
+        
+        // 1. Crear la Reserva (registro histórico) y obtener el ID
+        const nuevaReservaRef = reservasCollection.doc();
+        const idReservaGenerado = nuevaReservaRef.id;
+
+        reservaData = {
+            idReserva: idReservaGenerado, // Incluimos el ID generado
+            idLibro,
+            tituloLibro,
+            idSocio,
+            nombreSocio,
+            fechaReserva: FieldValue.serverTimestamp(),
+            estadoReserva: "ACTIVA" 
+        };
+        
+        t.set(nuevaReservaRef, reservaData); // Creamos el documento de reserva
+        
+        // 2. Actualizar el Libro: AÑADIR el ID de la RESERVA a la cola
+        // El array 'colaReservas' ahora contendrá IDs opacos, lo que mejora la seguridad.
+        t.update(libroRef, {
+            colaReservas: FieldValue.arrayUnion(idReservaGenerado)
+        });
+    });
+
+    // Devolvemos el objeto de la reserva, incluyendo el ID
+    return reservaData;
+};

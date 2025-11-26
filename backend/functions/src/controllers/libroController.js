@@ -1,3 +1,4 @@
+import { error } from "firebase-functions/logger";
 import * as LibroService from "../services/libroService.js";
 
 // GET all Books - with filters
@@ -53,3 +54,25 @@ export const eliminarLibro = async (req, res) => {
     res.status(404).json({ error: error.message });
   }
 };
+
+export const reservarLibro = async (req, res) => {
+  try {
+    const {id} = req.params
+    const idLibro = id
+    const {idSocio} = req.body
+
+    if (!idLibro) {
+      return res.json({error: "id del libro es obligatorio"})
+    }
+
+    if (!idSocio) {
+      return res.json({error: "id del socio es obligatorio"})
+    }
+    
+    const reserva = await LibroService.postReserva({idLibro, idSocio})
+    return res.json(reserva)
+  } catch (error) {
+    res.status(400).json({error: error.message})
+  }
+}
+
