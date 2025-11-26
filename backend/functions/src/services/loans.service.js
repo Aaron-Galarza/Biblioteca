@@ -1,7 +1,7 @@
-// ..backend/src/services/prestamoService.js
-
 import { db } from "../config/firebase.config.js";
 import { FieldValue } from "firebase-admin/firestore";
+
+import { calcularNuevaFechaVencimiento, toJSDate } from "../../utils/dateUtils.js"; 
 
 const prestamosCollection = db.collection("prestamos");
 const librosCollection = db.collection("libros");
@@ -110,4 +110,59 @@ export const cerrarPrestamo = async (idPrestamo) => {
   });
 
   return resultado;
+};
+
+export const extenderPrestamo = async (idPrestamo) => {
+  //obtener el Prestamo
+  const prestamoRef = prestamosCollection.doc(idPrestamo);
+  const prestamoDoc = await prestamoRef.get();
+  
+  if (!prestamoDoc.exists) throw new Error("Préstamo no encontrado.");
+    const prestamoData = prestamoDoc.data();
+    const idLibro = prestamoData.idLibro;
+    
+  //validar Estado
+  if (prestamoData.estadoPrestamo !== 'ACTIVO') {
+    throw new Error("Solo se pueden extender préstamos activos.");
+  }
+
+  //validar su conteo de Extensiones
+  if (prestamoData.conteoExtensiones >= 1) {
+    throw new Error("Este préstamo ya ha alcanzado el límite de extensiones (1).");
+  }
+
+  const libroDoc = await librosCollection.doc(idLibro).get();
+  const libroData = libroDoc.data();
+
+  //validar colaReservas
+  if (libroData.colaReservas && libroData.colaReservas.length > 0) {
+    throw new Error("Extensión rechazada: El libro tiene reservas activas de otros socios.");
+  }
+
+  //transformamos el string a date con backend\functions\utils\dateUtils.js
+  const fechaActual = toJSDate(prestamoData.fechaDevolucion);
+
+  //calculamos con la utilidad de backend\functions\utils\dateUtils.js
+  const nuevaFechaDevolucion = calcularNuevaFechaVencimiento(fechaActual, 5); //le extendemos 5 dias mas al come libros este
+  
+  //actualizamos el prestamo:    
+  let prestamoActualizadoData = {};
+
+  await db.runTransaction(async (t) => {
+    const prestamoDocTrans = await t.get(prestamoRef);      
+    
+    //se incrementa la fecha
+    prestamoActualizadoData = {
+      fechaDevolucion: nuevaFechaDevolucion,
+      conteoExtensiones: FieldValue.increment(1)
+    };
+    
+    t.update(prestamoRef, prestamoActualizadoData);
+  });
+  
+  return {
+    idPrestamo,
+    ...prestamoData,
+    ...prestamoActualizadoData
+  };
 };

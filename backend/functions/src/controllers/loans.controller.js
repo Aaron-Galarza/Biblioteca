@@ -1,3 +1,4 @@
+import { error } from "firebase-functions/logger";
 import * as PrestamoService from "../services/loans.service.js";
 
 export const obtenerPrestamos = async (req, res) => {
@@ -27,3 +28,18 @@ export const devolverLibro = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+export const extenderLoan = async (req, res) => {
+  try {
+    const {idPrestamo} = req.params
+
+    if (!idPrestamo) {
+      return res.status(400).json({error: "El ID del prestamos es obligatorio"})
+    }
+
+    const nuevaFecha = await PrestamoService.extenderPrestamo(idPrestamo)
+    res.json(nuevaFecha)  
+  } catch (error) {
+    res.status(400).json({error: error.message})
+  }
+}

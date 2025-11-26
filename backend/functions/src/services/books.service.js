@@ -1,6 +1,6 @@
 // C:\Users\Usuario\Desktop\Aaron\PRACTICAS\BibliotecaApp\backend\src\services\libroService.js
 
-import { db } from "../config/firebase.js";
+import { db } from "../config/firebase.config.js";
 import { FieldValue } from "firebase-admin/firestore";
 
 const librosCollection = db.collection("libros");
