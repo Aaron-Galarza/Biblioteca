@@ -1,10 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { MantineLayout } from '../components/MantineLayout';
+import { LoginLayout } from '../components/LoginLayout';
 
 const { user } = Astro.locals;
 ---
 
 <Layout>
-	<MantineLayout client:load user={user}>
+	<LoginLayout client:load user={user}>
 </Layout>

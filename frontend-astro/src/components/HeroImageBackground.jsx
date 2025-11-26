@@ -7,16 +7,16 @@ export function HeroImageBackground() {
       <Overlay color="#000" opacity={0.65} zIndex={1} />
 
       <div className={classes.inner}>
-        <Title className={classes.title}> Sistema de Gestión de Biblioteca </Title>
+        <Title className={classes.title}> Biblioteca Municipal Herrera </Title>
 
         <Container size={640}>
           <Text size="lg" className={classes.description}>
-            Plataforma integral para la administración moderna de bibliotecas
+            Plataforma digital para reservar y gestionar libros de la Biblioteca Herrera, un lugar donde la lectura y el conocimiento se encuentran.
           </Text>
         </Container>
 
         <div className={classes.controls}>
-          <Button className={classes.control}  variant="filled" color="rgba(71, 47, 22, 1)" size="lg">
+          <Button className={classes.control} variant="filled" color="rgba(71, 47, 22, 1)" size="lg">
             Comenzar
           </Button>
         </div>
