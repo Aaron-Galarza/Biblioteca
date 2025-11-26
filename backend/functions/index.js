@@ -15,6 +15,7 @@ import importRoutes from "./src/routes/import.routes.js"
 import configRoutes from "./src/routes/config.routes.js"
 import reportsRoutes from "./src/routes/reports.routes.js"
 import authRoutes from "./src/routes/auth.routes.js";
+import exportRoutes from "./src/routes/exports.routes.js"
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use("/fines", finesRoutes);           // Multas
 app.use("/config", configRoutes )
 app.use("/reports", reportsRoutes)
 app.use("/auth", authRoutes);             // Auth routes
+app.use("/export", exportRoutes)
 
 // Ruta temporal para la carga inicial de datos
 app.use("/import", importRoutes); // NOTE: Use for dev only
