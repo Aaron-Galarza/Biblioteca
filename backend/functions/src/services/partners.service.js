@@ -127,18 +127,21 @@ export const obtenerPrestamosSocio = async (idSocio) => {
 
 }
 
-//GET obtiene todas las multas (activas o pagadas) de un socio.
-export const obtenerMultasSocio = async (idSocio) => {
-  const socioDoc = await sociosCollection.doc(idSocio).get()
-  if(!socioDoc.exists) {
-    throw new Error("Socio no encontrado");
-    
-  }
+//GET obtiene todas las notificaciones de un socio.
+export const obtenerNotificacionesSocio = async (idSocio) => {
 
-  const snapshot = await multasCollection
-    .where("idSocio", "==", idSocio)
-    .orderBy("fecha", "desc")
-    .get()
+  const socioDoc = await sociosCollection.doc(idSocio).get();
+  if (!socioDoc.exists) { throw new Error("Socio no encontrado"); }
 
-  return snapshot.docs.map(doc => ({idMulta: doc.id, ...doc.data() }))
-}
+  const prestamosQuery = prestamosCollection.where("idSocio", "==", idSocio).orderBy("fechaInicio", "desc").get();
+
+  const multasQuery = multasCollection.where("idSocio", "==", idSocio).orderBy("fecha", "desc").get();
+
+  const [prestamosSnapshot, multasSnapshot] = await Promise.all([ prestamosQuery, multasQuery ]);
+
+  const prestamos = prestamosSnapshot.docs.map(doc => ({ idPrestamo: doc.id, ...doc.data() }));
+
+  const multas = multasSnapshot.docs.map(doc => ({ idMulta: doc.id, ...doc.data() }));
+
+  return { prestamos, multas };
+};

@@ -6,7 +6,8 @@ import {
     actualizarSocio,
     eliminarSocio,
     obtenerPrestamosSocio,
-    obtenerMultasSocio
+    obtenerMultasSocio,
+    obtenerNotificacionesSocio
 } from "../controllers/partners.controller.js";
 
 const router = express.Router();
@@ -20,5 +21,6 @@ router.put("/:id", actualizarSocio);
 router.delete("/:id", eliminarSocio);
 router.get("/:id/prestamos", obtenerPrestamosSocio)
 router.get("/:id/multas", obtenerMultasSocio)
+router.get("/:id/notificaciones", obtenerNotificacionesSocio)
 
 export default router;
