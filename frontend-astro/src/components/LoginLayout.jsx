@@ -2,13 +2,11 @@ import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
-import { MemoryRouter } from 'react-router-dom';
 import { useEffect } from 'react';
 import { LoginHeroImageBackground } from '../components/LoginHeroImageBackground';
 import { useAuthStore } from '../auth/store';
 
-export function LoginLayout({ user}) {
-  
+export function LoginLayout({ user }) {
   const { setUser } = useAuthStore();
 
   useEffect(() => {
@@ -16,11 +14,9 @@ export function LoginLayout({ user}) {
   }, [user, setUser]);
 
   return (
-    <MemoryRouter>
-      <MantineProvider>
-        <Notifications /> 
-        <LoginHeroImageBackground/>
-      </MantineProvider>
-    </MemoryRouter>
+    <MantineProvider withGlobalStyles withNormalizeCSS>
+      <Notifications /> 
+      <LoginHeroImageBackground/>
+    </MantineProvider>
   );
 }
