@@ -4,6 +4,6 @@ import { verifyToken, isAdmin, isUser } from "../middlewares/auth.middleware.js"
 
 const router = express.Router();
 
-router.get("/export-database",  verifyToken, isAdmin, exportDatabaseToCSV);
-
+router.get("/export-database", exportDatabaseToCSV);
+//   verifyToken, isAdmin, 
 export default router;

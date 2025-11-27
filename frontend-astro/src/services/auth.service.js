@@ -5,7 +5,7 @@ export const registerUser = async (data) => {
   const response = await fetch(`${BASE_URL}/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    credentials: "include",
+    // credentials: "include",
     body: JSON.stringify(data),
   });
 

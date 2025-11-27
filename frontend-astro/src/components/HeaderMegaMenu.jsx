@@ -12,9 +12,6 @@ import { useDisclosure } from "@mantine/hooks";
 import { useState, useEffect } from "react";
 import classes from "../styles/HeaderMegaMenu.module.css";
 
-// --- YA NO SE NECESITA useAuthStore ---
-// import { useAuthStore } from "../auth/store";
-
 const protectedRoutes = ["/bookings", "/loans", "/fines", "/notifications"];
 const adminRoutes = ["/dashboard"];
 
@@ -37,31 +34,92 @@ function decodeJwtPayload(token) {
   }
 }
 
+/**
+ * Realiza una solicitud al backend para descargar un archivo .zip de la base de datos.
+ * La función maneja la autenticación y dispara la descarga en el navegador.
+ */
+const exportDb = async () => {
+  const BASE_URL = import.meta.env.PUBLIC_BACKEND_URL;
+  const token = localStorage.getItem("token"); // Obtener el token para la autorización
+
+  // Si no hay token, no podemos continuar.
+  if (!token) {
+    console.error("No se encontró el token de autenticación.");
+    // Opcional: Redirigir al login o mostrar un mensaje de error.
+    window.location.href = "/login";
+    return;
+  }
+
+  try {
+    const response = await fetch(`${BASE_URL}/export/export-database`, {
+      method: "GET", // La descarga de archivos suele ser un GET
+      headers: {
+        // Incluimos el token de autorización que el backend espera
+        "Authorization": `Bearer ${token}`,
+      },
+      // No se necesita 'credentials' o 'body' para esta solicitud
+    });
+
+    if (!response.ok) {
+      // Si la respuesta no es exitosa, lanzamos un error
+      throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
+    }
+
+    // Convertimos la respuesta en un Blob (Binary Large Object)
+    const blob = await response.blob();
+
+    // Creamos una URL temporal para el blob
+    const url = window.URL.createObjectURL(blob);
+
+    // Creamos un elemento <a> temporal para iniciar la descarga
+    const a = document.createElement("a");
+    a.style.display = "none"; // Lo hacemos invisible
+    a.href = url;
+
+    // Asignamos el nombre del archivo que se descargará
+    a.download = "backup-biblioteca.zip";
+
+    // Lo añadimos al cuerpo del documento
+    document.body.appendChild(a);
+    
+    // Simulamos un clic para que se inicie la descarga
+    a.click();
+
+    // Limpiamos: revocamos la URL del objeto para liberar memoria
+    window.URL.revokeObjectURL(url);
+    
+    // Eliminamos el elemento <a> del DOM
+    document.body.removeChild(a);
+
+  } catch (error) {
+    console.error("Error al exportar la base de datos:", error);
+    // Aquí podrías mostrar una notificación de error al usuario
+  }
+};
+
+
 export function HeaderMegaMenu() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
   
-  // 1. Creamos estados locales para el usuario y el estado de login
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
 
-  // 2. useEffect ahora se encarga de leer TODO desde localStorage
   useEffect(() => {
     const loggedInStatus = localStorage.getItem("isLoggedIn") === "true";
     setIsLoggedIn(loggedInStatus);
 
     if (loggedInStatus) {
       const token = localStorage.getItem("token");
-      const userData = decodeJwtPayload(token); // Decodificamos el token
-      setUser(userData); // Guardamos los datos del usuario en el estado
+      const userData = decodeJwtPayload(token);
+      setUser(userData);
     }
-  }, []); // Se ejecuta solo una vez en el cliente
+  }, []);
 
-  // 3. Creamos una función de logout local
   const logout = () => {
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("token");
-    window.location.href = "/login"; // Redirigimos a login
+    window.location.href = "/login";
   };
 
   const goTo = (route) => {
@@ -73,7 +131,6 @@ export function HeaderMegaMenu() {
       return;
     }
     
-    // 4. La lógica de rol ahora usa el estado 'user' local
     if (isAdminRoute && user?.role !== 'ADMIN') {
         window.location.href = "/";
         return;
@@ -95,20 +152,28 @@ export function HeaderMegaMenu() {
             <a href="/books" onClick={(e) => { e.preventDefault(); goTo("/books"); }} className={classes.link}>
               Libros
             </a>
-            {isLoggedIn && (
+            {isLoggedIn && user?.role === "ADMIN" && (
               <>
-                <a href="/bookings" onClick={(e) => { e.preventDefault(); goTo("/bookings"); }} className={classes.link}>
-                  Reservas
-                </a>
-                <a href="/loans" onClick={(e) => { e.preventDefault(); goTo("/loans"); }} className={classes.link}>
-                  Préstamos
-                </a>
-                <a href="/fines" onClick={(e) => { e.preventDefault(); goTo("/fines"); }} className={classes.link}>
-                  Multas
-                </a>
-                <a href="/notifications" onClick={(e) => { e.preventDefault(); goTo("/notifications"); }} className={classes.link}>
-                  Notificaciones
-                </a>
+              <a href="/partners" onClick={(e) => { e.preventDefault(); goTo("/partners"); }} className={classes.link}>
+                Socios
+              </a>
+              
+              <a href="/loans" onClick={(e) => { e.preventDefault(); goTo("/loans"); }} className={classes.link}>
+                Préstamos
+              </a>
+              <a href="/fines" onClick={(e) => { e.preventDefault(); goTo("/fines"); }} className={classes.link}>
+                Multas
+              </a>
+              <a href="/populars" onClick={(e) => { e.preventDefault(); goTo("/populars"); }} className={classes.link}>
+                Populares
+              </a>
+              <a href="/actives" onClick={(e) => { e.preventDefault(); goTo("/actives"); }} className={classes.link}>
+                Activos
+              </a>
+              {/* --- BOTÓN DE EXPORTAR ACTUALIZADO --- */}
+              <a href="#" onClick={(e) => { e.preventDefault(); exportDb(); }} className={classes.link}>
+                Exportar
+              </a>
               </>
             )}
           </Group>
@@ -125,14 +190,7 @@ export function HeaderMegaMenu() {
               </>
             ) : (
               <>
-                {/* 5. La comprobación de ADMIN usa el estado local */}
-                {user?.role === "ADMIN" && (
-                  <Button variant="filled" color="rgba(71, 47, 22, 1)" onClick={() => goTo("/dashboard")}>
-                    Dashboard
-                  </Button>
-                )}
-                {/* 6. El botón de logout ahora llama a la función local */}
-                <Button ariant="filled" color="rgba(71, 47, 22, 1)" onClick={logout}>
+                <Button variant="filled" color="rgba(71, 47, 22, 1)" onClick={logout}>
                   Cerrar sesión
                 </Button>
               </>
@@ -158,19 +216,27 @@ export function HeaderMegaMenu() {
           <a href="/books" onClick={(e) => { e.preventDefault(); closeDrawer(); goTo("/books"); }} className={classes.link}>
             Libros
           </a>
-          {isLoggedIn && (
+          {isLoggedIn && user?.role === "ADMIN" && (
             <>
-              <a href="/bookings" onClick={(e) => { e.preventDefault(); closeDrawer(); goTo("/bookings"); }} className={classes.link}>
-                Reservas
+              <a href="/partners" onClick={(e) => { e.preventDefault(); closeDrawer(); goTo("/partners"); }} className={classes.link}>
+                Socios
               </a>
+              
               <a href="/loans" onClick={(e) => { e.preventDefault(); closeDrawer(); goTo("/loans"); }} className={classes.link}>
                 Préstamos
               </a>
               <a href="/fines" onClick={(e) => { e.preventDefault(); closeDrawer(); goTo("/fines"); }} className={classes.link}>
                 Multas
               </a>
-              <a href="/notifications" onClick={(e) => { e.preventDefault(); closeDrawer(); goTo("/notifications"); }} className={classes.link}>
-                Notificaciones
+              <a href="/populars" onClick={(e) => { e.preventDefault(); closeDrawer(); goTo("/populars"); }} className={classes.link}>
+                Populares
+              </a>
+              <a href="/actives" onClick={(e) => { e.preventDefault(); closeDrawer(); goTo("/actives"); }} className={classes.link}>
+                Activos
+              </a>
+              {/* --- BOTÓN DE EXPORTAR ACTUALIZADO EN EL DRAWER --- */}
+              <a href="#" onClick={(e) => { e.preventDefault(); closeDrawer(); exportDb(); }} className={classes.link}>
+                Exportar
               </a>
             </>
           )}
@@ -189,11 +255,6 @@ export function HeaderMegaMenu() {
               </>
             ) : (
               <>
-                {user?.role === "ADMIN" && (
-                  <Button variant="filled" color="rgba(71, 47, 22, 1)" onClick={() => { closeDrawer(); goTo("/dashboard"); }}>
-                    Dashboard
-                  </Button>
-                )}
                 <Button variant="filled" color="rgba(71, 47, 22, 1)" onClick={logout}>
                   Cerrar sesión
                 </Button>
