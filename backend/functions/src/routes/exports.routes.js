@@ -1,9 +1,9 @@
 import express from 'express';
 import { exportDatabaseToCSV } from '../controllers/exports.controller.js';
+import { verifyToken, isAdmin, isUser } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-// Ruta para exportar TODA la base de datos
-router.get("/export-database", exportDatabaseToCSV);
+router.get("/export-database",  verifyToken, isAdmin, exportDatabaseToCSV);
 
 export default router;
