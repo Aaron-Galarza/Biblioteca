@@ -6,6 +6,7 @@ dotenv.config();
 import express from "express";
 import cors from "cors";
 import * as functions from "firebase-functions"; 
+import cookieParser from "cookie-parser";
 
 import booksRoutes from "./src/routes/books.routes.js";
 import partnersRoutes from "./src/routes/partners.routes.js"; // TODO: From partners to user?
@@ -18,6 +19,7 @@ import authRoutes from "./src/routes/auth.routes.js";
 import exportRoutes from "./src/routes/exports.routes.js"
 
 const app = express();
+app.use(cookieParser());
 
 const corsOptions = {
   origin: true,

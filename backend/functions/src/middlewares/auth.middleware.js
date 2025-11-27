@@ -37,3 +37,20 @@ export const isUser = (req, res, next) => {
         return res.status(403).json({ error: "Acceso denegado: Se requiere iniciar sesión." });
     }
 };
+
+export const authRequired = (req, res, next) => {
+  const token = req.cookies?.auth_token;
+
+  if (!token) {
+    return res.status(401).json({ error: "Token requerido" });
+  }
+
+  try {
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = payload;
+    next();
+  } catch (error) {
+    console.error("Error verificando JWT:", error.message);
+    return res.status(401).json({ error: "Token inválido o expirado" });
+  }
+};

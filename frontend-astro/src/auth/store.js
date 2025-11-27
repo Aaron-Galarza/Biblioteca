@@ -20,13 +20,9 @@ export const useAuthStore = create((set) => ({
   logout: async () => {
     try {
       await fetch('/auth/logout', { method: 'POST', credentials: 'include' });
-    } catch (err) {
-      // ignore (mejor mostrar notificación en producción)
-      console.error('logout error', err);
-    } finally {
-      set({ user: null, isLoggedIn: false });
-      // redirigir al login
-      window.location.href = '/login';
-    }
-  },
+    } catch {}
+    set({ user: null, isLoggedIn: false });
+    window.location.href = '/login';
+  }
+
 }));

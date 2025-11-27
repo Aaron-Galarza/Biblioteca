@@ -10,7 +10,7 @@ import {
   TextInput,
   Title,
   Group,
-  Anchor
+  Anchor,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { loginUser } from "../../services/auth.service";
@@ -25,6 +25,8 @@ export function LoginForm() {
   });
 
   const setUser = useAuthStore((state) => state.setUser);
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+
   const [loading, setLoading] = useState(false);
 
   const handleChange = (event) => {
@@ -32,15 +34,13 @@ export function LoginForm() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setLoading(true);
 
     try {
       const response = await loginUser(formData);
-      console.log(formData);
 
-      localStorage.setItem("token", response.token);
       setUser(response.user);
 
       notifications.show({
@@ -49,11 +49,11 @@ export function LoginForm() {
         color: "green",
       });
 
-      window.location.replace("/dashboard");
-    } catch (error) {
+      window.location.href = "/dashboard";
+    } catch (err) {
       notifications.show({
         title: "Error en Login",
-        message: error.message ?? "Credenciales inválidas",
+        message: err.message ?? "Credenciales inválidas",
         color: "red",
       });
     } finally {

@@ -35,25 +35,28 @@ export default function BooksPage() {
       <section>
         <div className={classes.wrapper}>
           <section style={{ padding: 50 }}>
-            <Carousel
-              withIndicators
-              height={450} // Ajusta la altura según sea necesario
-              slideSize="33.333333%"
-            //   slideSize={{ base: "100%", sm: "50%", md: "33.333333%" }} // Define el tamaño de las diapositivas para diferentes tamaños de pantalla
-              slideGap={{ base: 0, sm: "md" }} // Define el espacio entre diapositivas
-              loop
-              align="start"
-              controlsOffset="lg"
-              controlSize={35}
-              emblaOptions={{
-                loop: true,
-                dragFree: false,
-                align: "center",
-              }}
-              slidesToScroll={1} // Define cuántas diapositivas se desplazan a la vez
-            >
-              {slides}
-            </Carousel>
+            <div style={{ height: 400, display: "flex" }}>
+              <Carousel
+                withIndicators
+                height="100%"
+                flex={1}
+                slideSize="33.333333%"
+                //   slideSize={{ base: "100%", sm: "50%", md: "33.333333%" }} // Define el tamaño de las diapositivas para diferentes tamaños de pantalla
+                slideGap={{ base: 0, sm: "md" }}
+                loop
+                align="start"
+                controlsOffset="lg"
+                controlSize={35}
+                emblaOptions={{
+                  loop: true,
+                  dragFree: false,
+                  align: "center",
+                }}
+                slidesToScroll={1} // Define cuántas diapositivas se desplazan a la vez
+              >
+                {slides}
+              </Carousel>
+            </div>
           </section>
         </div>
       </section>

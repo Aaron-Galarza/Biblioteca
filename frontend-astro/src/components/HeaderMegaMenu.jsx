@@ -20,27 +20,7 @@ export function HeaderMegaMenu() {
 
   // UX guard: si no está logueado vamos a /login (middleware seguirá validando en el servidor)
   const goTo = (route) => {
-    const path = route.startsWith("/") ? route : `/${route}`;
-
-    // Rutas públicas (por prefijo)
-    const PUBLIC_PREFIXES = ["/login", "/register", "/books"];
-
-    const isPublic = PUBLIC_PREFIXES.some((p) => path.startsWith(p));
-
-    // Restricción: dashboard sólo admin
-    if (path === "/dashboard" && user?.role !== "ADMIN") {
-      window.location.href = "/";
-      return;
-    }
-
-    // Guard: usuarios NO logueados
-    if (!isLoggedIn && !isPublic) {
-      const returnTo = encodeURIComponent(path);
-      window.location.href = `/login?returnTo=${returnTo}`;
-      return;
-    }
-
-    window.location.href = path;
+    window.location.href = route;
   };
 
   return (
