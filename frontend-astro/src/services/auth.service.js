@@ -22,11 +22,18 @@ export const loginUser = async (data) => {
   const response = await fetch(`${BASE_URL}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    credentials: "include", // <-- fundamental
+    // credentials: "include", // <-- fundamental
     body: JSON.stringify(data),
   });
 
   const result = await response.json();
+
+  // console.log(result);
+
+  localStorage.setItem("isLoggedIn", "true");
+  localStorage.setItem("token", result.token);
+
+  // console.log(localStorage.getItem("token"));
 
   if (!response.ok) {
     throw new Error(result.error || result.message || "Error desconocido");

@@ -49,7 +49,7 @@ export function LoginForm() {
         color: "green",
       });
 
-      window.location.href = "/dashboard";
+      window.location.href = "/";
     } catch (err) {
       notifications.show({
         title: "Error en Login",
