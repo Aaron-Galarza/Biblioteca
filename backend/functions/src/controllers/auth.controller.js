@@ -17,11 +17,15 @@ export const login = async (req, res) => {
     // El servicio devuelve { token, user }
     const { token, user } = await authService.login(req.body);
 
+    // Cloud Run exige setear los headers CORS manualmente
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+
     // *** SETEAR COOKIE HTTPONLY ***
     res.cookie("auth_token", token, {
       httpOnly: true,
-      secure: true,
-      sameSite: "strict",
+      secure: true,         // obligatorio para sameSite None
+      sameSite: "None",     // necesario para Cross-Site cookies
       path: "/",
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 días
     });

@@ -25,6 +25,7 @@ const corsOptions = {
   origin: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
 };
 
 app.use(cors(corsOptions));
@@ -51,7 +52,12 @@ app.use((err, req, res, next) => {
   res.status(statusCode).json({ error: err.message });
 });
 
-
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Headers", "Content-Type");
+  next();
+});
 
 // Export the Express application as a single HTTP function for Firebase
 export const api = functions.https.onRequest(
