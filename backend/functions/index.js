@@ -49,5 +49,9 @@ app.use((err, req, res, next) => {
   res.status(statusCode).json({ error: err.message });
 });
 
+
+
 // Export the Express application as a single HTTP function for Firebase
-export const api = functions.https.onRequest(app);
+export const api = functions.https.onRequest(
+  {secrets: ["JWT_SECRET"]},
+  app);
