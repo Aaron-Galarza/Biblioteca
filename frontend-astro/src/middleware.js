@@ -1,7 +1,7 @@
 // src/auth.middleware.js
 import { defineMiddleware } from "astro:middleware";
 
-const protectedRoutes = ["/bookings", "/loans", "/fines", "/notifications", "/books"]; // agregar según convenga
+const protectedRoutes = ["/bookings", "/loans", "/fines", "/notifications"];
 const adminRoutes = ["/dashboard"];
 
 export const onRequest = defineMiddleware(async (context, next) => {

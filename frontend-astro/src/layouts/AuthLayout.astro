@@ -1,0 +1,21 @@
+---
+const { title } = Astro.props;
+import "@mantine/core/styles.css";
+import "@mantine/notifications/styles.css";
+import { MantineProvider } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>{title}</title>
+  </head>
+
+  <body>
+    <MantineProvider>
+      <Notifications />
+      <slot />
+    </MantineProvider>
+  </body>
+</html>
